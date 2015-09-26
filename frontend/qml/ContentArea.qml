@@ -17,9 +17,7 @@ Rectangle {
     property alias contentStackView: contentAreaStackView;
     property alias contentBoxartGrid: boxArtGridComponent
     property alias contentInputView: inputView;
-
     property alias contentSlider: zoomSlider;
-
     property alias boxartGrid: boxArtGridComponent;
 
     Rectangle {
@@ -342,9 +340,7 @@ Rectangle {
 
         BoxartGridView {
             id: boxartGrid;
-
             color: "transparent";
-
             objectName: "BoxartGridView";
 
         }

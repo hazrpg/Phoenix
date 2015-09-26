@@ -1,15 +1,8 @@
 TEMPLATE = subdirs
 
-SUBDIRS += backend
-SUBDIRS += frontend
-
-backend.file = backend/backend.pro
-frontend.file = frontend/frontend.pro
-
 CONFIG += ordered
+SUBDIRS +=  backend \
+            frontend \
+# plugins \
 
-# Additional import path used to resolve QML modules in Qt Creator's code model
-QML_IMPORT_PATH =
-
-# Default rules for deployment.
 include(common.pri)

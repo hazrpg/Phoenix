@@ -13,5 +13,12 @@
         <file>InputView.qml</file>
         <file>InputMappingColumn.qml</file>
         <file>MouseDrivenView.qml</file>
+        <file>Components/IconTile.qml</file>
+        <file>Components/CollectionsHeader.qml</file>
+        <file>Components/Utils.js</file>
+        <file>Components/FontUtils.js</file>
+        <file>Components/Units.js</file>
+        <file>Components/BoxArtTile.qml</file>
+        <file>Components/AbstractScrollBar.qml</file>
     </qresource>
 </RCC>

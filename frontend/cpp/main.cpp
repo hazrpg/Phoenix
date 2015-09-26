@@ -83,8 +83,66 @@ int main( int argc, char *argv[] ) {
 
     QQmlApplicationEngine engine;
 
-    // Necessary to quit properly
-    // QObject::connect( &engine, &QQmlApplicationEngine::quit, &app, &QApplication::quit );
+
+    QUrl appPath(QString("%1").arg(QGuiApplication::applicationDirPath()));
+    engine.rootContext()->setContextProperty("appPath", appPath);
+
+    QUrl userPath;
+    const QStringList usersLocation = QStandardPaths::standardLocations(QStandardPaths::HomeLocation);
+    if (usersLocation.isEmpty())
+        userPath = appPath.resolved(QUrl("/home/"));
+    else
+        userPath = QString("%1").arg(usersLocation.first());
+    engine.rootContext()->setContextProperty("userPath", userPath);
+
+    QUrl imagePath;
+    const QStringList picturesLocation = QStandardPaths::standardLocations(QStandardPaths::PicturesLocation);
+    if (picturesLocation.isEmpty())
+        imagePath = appPath.resolved(QUrl("images"));
+    else
+        imagePath = QString("%1").arg(picturesLocation.first());
+    engine.rootContext()->setContextProperty("imagePath", imagePath);
+
+    QUrl videoPath;
+    const QStringList moviesLocation = QStandardPaths::standardLocations(QStandardPaths::MoviesLocation);
+    if (moviesLocation.isEmpty())
+        videoPath = appPath.resolved(QUrl("./"));
+    else
+        videoPath = QString("%1").arg(moviesLocation.first());
+    engine.rootContext()->setContextProperty("videoPath", videoPath);
+
+    QUrl homePath;
+    const QStringList homesLocation = QStandardPaths::standardLocations(QStandardPaths::HomeLocation);
+    if (homesLocation.isEmpty())
+        homePath = appPath.resolved(QUrl("/"));
+    else
+        homePath = QString("%1").arg(homesLocation.first());
+    engine.rootContext()->setContextProperty("homePath", homePath);
+
+    QUrl desktopPath;
+    const QStringList desktopsLocation = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation);
+    if (desktopsLocation.isEmpty())
+        desktopPath = appPath.resolved(QUrl("/"));
+    else
+        desktopPath = QString("%1").arg(desktopsLocation.first());
+    engine.rootContext()->setContextProperty("desktopPath", desktopPath);
+
+    QUrl docPath;
+    const QStringList docsLocation = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation);
+    if (docsLocation.isEmpty())
+        docPath = appPath.resolved(QUrl("/"));
+    else
+        docPath = QString("%1").arg(docsLocation.first());
+    engine.rootContext()->setContextProperty("docPath", docPath);
+
+
+    QUrl tempPath;
+    const QStringList tempsLocation = QStandardPaths::standardLocations(QStandardPaths::TempLocation);
+    if (tempsLocation.isEmpty())
+        tempPath = appPath.resolved(QUrl("/"));
+    else
+        tempPath = QString("%1").arg(tempsLocation.first());
+    engine.rootContext()->setContextProperty("tempPath", tempPath);
 
     // Register my types!
     VideoItem::registerTypes();
@@ -94,6 +152,8 @@ int main( int argc, char *argv[] ) {
     qmlRegisterType<Library::PlatformsModel>( "vg.phoenix.models", 1, 0, "PlatformsModel" );
     qmlRegisterType<Library::CollectionsModel>( "vg.phoenix.models", 1, 0, "CollectionsModel" );
     qmlRegisterType<Library::LibraryModel>( "vg.phoenix.models", 1, 0, "LibraryModel" );
+   //qmlRegisterType<Library::MetaDataDatabase>( "vg.phoenix.models", 1, 0, "MetaDatabase" );
+
     qmlRegisterType<Library::ImageCacher>( "vg.phoenix.cache", 1, 0, "ImageCacher" );
 
     qRegisterMetaType<Library::GameData>( "GameData" );

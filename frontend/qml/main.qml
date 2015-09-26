@@ -77,7 +77,6 @@ ApplicationWindow {
         id: mouseDrivenView;
 
         MouseDrivenView {
-
             objectName: "MouseDrivenView";
         }
     }
@@ -86,6 +85,7 @@ ApplicationWindow {
         id: gameView;
 
         VideoItem {
+            id: videoItem
             inputManager: root.inputManager;
         }
     }
