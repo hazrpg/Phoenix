@@ -8,7 +8,7 @@ CONFIG += c++11 lib_bundle
 INCLUDEPATH += ../externals/quazip/quazip
 
 # Inlcude backend path
-INCLUDEPATH += ../backend ../backend/input
+INCLUDEPATH += ../backend ../backend/input ../backend/core ../backend/consumer
 
 LIBS += -L../externals/quazip/quazip -lquazip
 LIBS += -L../backend -lphoenix-backend

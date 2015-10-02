@@ -74,6 +74,8 @@ int main( int argc, char *argv[] ) {
     // Uncomment this to enable the message handler for debugging and stack tracing
     // qInstallMessageHandler( phoenixDebugMessageHandler );
 
+    QThread::currentThread()->setObjectName( "Main thread" );
+
     QApplication app( argc, argv );
 
     // On Windows, the organization domain is used to set the registry key path... for some reason
