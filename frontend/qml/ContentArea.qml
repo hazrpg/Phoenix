@@ -20,10 +20,8 @@ Rectangle {
     property alias boxartGrid: boxArtGridComponent;
 
     property string screenIcon: {
-        if ( root.visibility === Window.FullScreen )
-            screenIcon: "window.svg";
-        else if ( root.visibility === Window.Windowed | Window.Maximized )
-            screenIcon: "fullscreen.svg";
+        if ( root.visibility === Window.FullScreen ) screenIcon: "window.svg";
+        else if ( root.visibility === Window.Windowed | Window.Maximized ) screenIcon: "fullscreen.svg";
     }
 
     Rectangle {
@@ -74,8 +72,7 @@ Rectangle {
         }
 
         Row {
-            anchors { verticalCenter: parent.verticalCenter; right: parent.right; rightMargin: 30;
-            }
+            anchors { verticalCenter: parent.verticalCenter; right: parent.right; rightMargin: 30; }
             spacing: 12;
 
             Rectangle {

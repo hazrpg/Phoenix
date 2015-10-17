@@ -20,13 +20,16 @@ Item {
             id: backgroundBlur;
             anchors.fill: parent;
             color: PhxTheme.common.baseBackgroundColor;
-            Image { smooth: true; source: PhxTheme.common.backgroundImage; anchors.fill: parent; fillMode: Image.PreserveAspectCrop; }
+            // Image { smooth: true; source: "bg3.png"; horizontalAlignment: Image.AlignLeft; verticalAlignment: Image.AlignTop; anchors.fill: parent; fillMode: Image.Tile; }
+            // Image { smooth: true; source: "bg1.svg"; horizontalAlignment: Image.AlignLeft; verticalAlignment: Image.AlignTop; anchors.fill: parent; fillMode: Image.PreserveAspectFit; }
+            Image { smooth: true; source: "bg0.png"; horizontalAlignment: Image.AlignLeft; verticalAlignment: Image.AlignTop; anchors.fill: parent; fillMode: Image.Tile; }
+            Image { smooth: true; source: "bg-t.jpg"; horizontalAlignment: Image.AlignLeft; verticalAlignment: Image.AlignTop; anchors.fill: parent; fillMode: Image.PreserveAspectCrop; opacity: .75; }
          }
-        /* FastBlur {
+         /* FastBlur {
             id: blurEffect;
             anchors.fill: parent;
             source: backgroundBlur;
-            radius: 1;
+            radius: 0;
          } */
 
         RowLayout {

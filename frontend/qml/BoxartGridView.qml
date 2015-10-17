@@ -25,7 +25,7 @@ Rectangle {
         // Don't use these two properties, they just create binding loops...
         // property int numItems: Math.floor( contentItem.width / contentArea.contentSlider.value );
         // property int addToMarginsTotal: contentItem.width % contentArea.contentSlider.value;
-        property double addToMargins: 0
+        property double addToMargins: 0;
 
         Component.onCompleted: {
             addToMargins = Qt.binding( function() {
@@ -75,21 +75,19 @@ Rectangle {
 
             // Behavior on contentY { SmoothedAnimation { duration: 250; } }
 
-            // FIXME: Doesn't do anything useful if BoxartGridView gets destroyed and reinstantiated over and over
-            // Yes this isn't ideal, but it is a work around for the view resetting back to 0
-            // whenever a game is imported.
-            /*property real lastY: 0;
+            // A work around for the view resetting back to 0 whenever a game is imported
+            property real lastY: 0;
 
             onContentYChanged: {
                 if (contentY == 0) {
-                    console.log( contentY );
+                    // console.log( contentY );
                     if ( Math.round( lastY ) !== 0.0 ) {
                         contentY = lastY;
                     }
                 }
                 else
                     lastY = contentY;
-            }*/
+            }
 
             boundsBehavior: Flickable.StopAtBounds;
 
@@ -110,21 +108,33 @@ Rectangle {
                     onClicked: { gridView.currentIndex = index; }
                     onDoubleClicked: {
 
-                        // Prevent user from clicking on anything while the transition occurs
-                        root.disableMouseClicks();
+                        var core = coreFilePath;
+                        if ( core === "" ) {
+                            core = gameLauncher.getDefaultCore( system )
+                        }
 
-                        // Don't check the mouse until the transition's done
-                        rootMouseArea.hoverEnabled = false;
+                        var game = gameLauncher.trimmedGame( absoluteFilePath );
 
-                        // Let the user know we're thinking!
-                        rootMouseArea.cursorShape = Qt.BusyCursor;
+                        if ( gameLauncher.verify( core, game ) ) {
 
-                        // Do the assignment that triggers the game launch
-                        root.gameViewObject.coreGamePair = { "corePath": coreFilePath
-                                                           , "gamePath": absoluteFilePath
-                                                           , "title": title };
+                            // Prevent user from clicking on anything while the transition occurs
+                            root.disableMouseClicks();
 
-                        layoutStackView.pop();
+                            // Don't check the mouse until the transition's done
+                            rootMouseArea.hoverEnabled = false;
+
+                            // Let the user know we're thinking!
+                            rootMouseArea.cursorShape = Qt.BusyCursor;
+
+                            // Do the assignment that triggers the game launch
+                            root.gameViewObject.coreGamePair = { "corePath": core
+                                                               , "gamePath": game
+                                                               , "title": title };
+
+                            layoutStackView.pop();
+                        }
+
+
                     }
                 }
 
@@ -167,10 +177,9 @@ Rectangle {
                                 }
                             }
 
-                            // BoxArt Outer Border
+                            // BoxArt: Outer Border
                             Rectangle {
-                                anchors.verticalCenter: parent.verticalCenter;
-                                anchors.horizontalCenter: parent.horizontalCenter;
+                                anchors { bottom: parent.bottom; topMargin: -border.width; bottomMargin: -border.width; leftMargin: -border.width; rightMargin: -border.width; horizontalCenter: parent.horizontalCenter; }
                                 id: imageBackground;
                                 z: gridItemImage.z - 1;
                                 height: parent.paintedHeight + border.width * 2;
@@ -178,7 +187,7 @@ Rectangle {
                                 border.color: index === gridView.currentIndex ? PhxTheme.common.boxartSelectedBorderColor : PhxTheme.common.boxartNormalBorderColor;
                                 border.width: 2 + (contentArea.contentSlider.value/50);
                                 color: "transparent";
-                                radius: 1;
+                                radius: 3;
                             }
 
                             // BoxArt Shadow
@@ -218,6 +227,11 @@ Rectangle {
                         fontSize: PhxTheme.common.baseFontSize;
                         running: index === gridView.currentIndex || gridItemMouseArea.containsMouse;
                         pixelsPerFrame: contentArea.contentSlider.value / 100;
+
+                        Connections {
+                            target: gridView;
+                            onCellWidthChanged: titleText.handleSituationChanged();
+                        }
                     }
 
                     // For debugging the above MarqueeText

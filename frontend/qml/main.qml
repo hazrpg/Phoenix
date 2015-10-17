@@ -6,6 +6,8 @@ import QtGraphicalEffects 1.0
 
 import vg.phoenix.backend 1.0
 import vg.phoenix.themes 1.0
+import vg.phoenix.launcher 1.0
+import vg.phoenix.paths 1.0
 
 ApplicationWindow {
     id: root;
@@ -17,21 +19,23 @@ ApplicationWindow {
     color: "black";
 
     property int defaultMinHeight: 540;
-    property int defaultMinWidth: 800;
+    property int defaultMinWidth: 840;
     minimumHeight: defaultMinHeight;
     minimumWidth: defaultMinWidth;
 
-    property InputManager inputManager: InputManager { gamepadControlsFrontend: true; }
+    GameLauncher {
+        id: gameLauncher;
+    }
+
+    property InputManager inputManager: InputManager {
+        id: inputManager;
+        gamepadControlsFrontend: true;
+    }
     property var gameViewObject: null;
 
     // Use when transitioning
-    function disableMouseClicks() {
-        rootMouseArea.propagateComposedEvents = false;
-    }
-
-    function enableMouseClicks() {
-        rootMouseArea.propagateComposedEvents = true;
-    }
+    function disableMouseClicks() { rootMouseArea.propagateComposedEvents = false; }
+    function enableMouseClicks()  { rootMouseArea.propagateComposedEvents = true; }
 
     MouseArea {
         id: rootMouseArea;
@@ -122,9 +126,7 @@ ApplicationWindow {
                 root.enableMouseClicks();
 
                 // Enable hover events iff GameView is the current top of the stack
-                if( layoutStackView.depth === 1 ) {
-                    rootMouseArea.hoverEnabled = true;
-                }
+                if( layoutStackView.depth === 1 ) { rootMouseArea.hoverEnabled = true; }
                 layoutStackView.transitioning = false;
             }
 
@@ -171,23 +173,17 @@ ApplicationWindow {
                 }
             }
 
-            Component.onCompleted: {
-                root.inputManager.emitConnectedDevices();
-            }
+            Component.onCompleted: { root.inputManager.emitConnectedDevices(); }
         }
     }
 
     Component {
         id: mouseDrivenView;
-
         MouseDrivenView { objectName: "MouseDrivenView"; }
     }
 
     Component {
         id: gameView;
-
-        GameView {
-
-        }
+        GameView { }
     }
 }
