@@ -33,6 +33,41 @@ ApplicationWindow {
     }
     property var gameViewObject: null;
 
+    function toggleFullscreen() {
+        if ( root.visibility === Window.FullScreen )
+            root.visibility = Window.Windowed;
+        else if ( root.visibility === Window.Windowed | Window.Maximized )
+            root.visibility = Window.FullScreen;
+    }
+
+    Item {
+        anchors.fill: parent;
+        Keys.enabled: true;
+        focus: true;
+        Keys.onPressed: {
+            switch( event.key ) {
+            case Qt.Key_F11:
+                root.toggleFullscreen();
+                event.accepted = true;
+                break;
+            case Qt.Key_Enter:
+                if( event.modifiers & Qt.AltModifier ) {
+                    root.toggleFullscreen();
+                    event.accepted = true;
+                }
+                break;
+            case Qt.Key_Return:
+                if( event.modifiers & Qt.AltModifier ) {
+                    root.toggleFullscreen();
+                    event.accepted = true;
+                }
+                break;
+            default:
+                break;
+            }
+        }
+    }
+
     // Use when transitioning
     function disableMouseClicks() { rootMouseArea.propagateComposedEvents = false; }
     function enableMouseClicks()  { rootMouseArea.propagateComposedEvents = true; }

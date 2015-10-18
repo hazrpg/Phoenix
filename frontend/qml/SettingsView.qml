@@ -61,7 +61,6 @@ ScrollView {
                 fontSize: PhxTheme.selectionArea.basePixelSize;
                 color: index === listView.currentIndex ? PhxTheme.common.baseBackgroundColor : PhxTheme.selectionArea.baseFontColor;
 
-
                 spacing: 40;
                 running: index === listView.currentIndex || mouseArea.containsMouse;
                 pixelsPerFrame: 2.0;

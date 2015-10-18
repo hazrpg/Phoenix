@@ -50,6 +50,8 @@ Rectangle {
                 height: parent.height;
                 textColor: "#FFFFFF";
 
+                KeyNavigation.tab: zoomSlider;
+
                 Timer {
                     id: searchTimer;
                     interval: 300;
@@ -75,12 +77,17 @@ Rectangle {
             anchors { verticalCenter: parent.verticalCenter; right: parent.right; rightMargin: 30; }
             spacing: 12;
 
-            Rectangle {
+            Item {
                 anchors { verticalCenter: parent.verticalCenter; }
-                border { width: 1; color: "white"; }
-                color: "transparent";
-                height: 8;
+                height: 12;
                 width: height;
+                Rectangle {
+                    anchors { verticalCenter: parent.verticalCenter; }
+                    border { width: 1; color: "white"; }
+                    color: "transparent";
+                    height: 8;
+                    width: height;
+                }
             }
 
             Slider {
@@ -94,6 +101,14 @@ Rectangle {
                 stepSize: 50;
                 activeFocusOnPress: true;
                 tickmarksEnabled: false;
+
+                Rectangle {
+                    anchors { top: parent.top; bottom: parent.bottom; horizontalCenter: parent.horizontalCenter; }
+                    width: 12 + 12 + 12 + parent.width + 12 + 12 + 12;
+                    color: "transparent";
+                    border.color: parent.activeFocus === true ? "white" : "transparent";
+                    border.width: 2;
+                }
 
                 style: SliderStyle {
                     handle: Item {
@@ -140,12 +155,17 @@ Rectangle {
                     iconName: screenIcon;
                     iconSource: screenIcon;
                     style: ButtonStyle { background: Rectangle { color: "transparent"; } }
-                    onClicked: {
-                            if ( root.visibility === Window.FullScreen )
-                                root.visibility = Window.Windowed;
-                            else if ( root.visibility === Window.Windowed | Window.Maximized )
-                                root.visibility = Window.FullScreen;
+                    Rectangle {
+                        anchors.fill: parent;
+                        color: "transparent";
+                        border.color: parent.activeFocus === true ? "white" : "transparent";
+                        border.width: 2;
                     }
+
+                    onClicked: root.toggleFullscreen();
+                    Keys.enabled: true;
+                    Keys.onEnterPressed: root.toggleFullscreen();
+                    Keys.onReturnPressed: root.toggleFullscreen();
                 }
             }
         }
@@ -272,6 +292,7 @@ Rectangle {
             id: boxartGrid;
             objectName: "BoxartGridView";
             color: "transparent";
+            KeyNavigation.tab: headerArea;
         }
     }
 

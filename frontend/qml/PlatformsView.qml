@@ -14,6 +14,13 @@ ScrollView {
         spacing: 0;
         model: PlatformsModel { id: platformsModel; }
 
+        Rectangle {
+            anchors.fill: parent;
+            color: "transparent";
+            border.color: parent.activeFocus === true ? "white" : "transparent";
+            border.width: 2;
+        }
+
         highlight: Item {
             x: listView.currentItem.x;
             y: listView.currentItem.y;
@@ -66,7 +73,6 @@ ScrollView {
                 text: listView.model.get( index );
                 fontSize: PhxTheme.selectionArea.basePixelSize;
                 color: index === listView.currentIndex ? PhxTheme.common.baseBackgroundColor : PhxTheme.selectionArea.baseFontColor;
-
 
                 spacing: 40;
                 running: index === listView.currentIndex || mouseArea.containsMouse;
