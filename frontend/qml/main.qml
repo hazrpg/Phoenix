@@ -51,13 +51,19 @@ ApplicationWindow {
                 event.accepted = true;
                 break;
             case Qt.Key_Enter:
-                if( event.modifiers & Qt.AltModifier ) {
+                if( event.modifiers & ( Qt.AltModifier | Qt.ControlModifier ) ) {
                     root.toggleFullscreen();
                     event.accepted = true;
                 }
                 break;
             case Qt.Key_Return:
-                if( event.modifiers & Qt.AltModifier ) {
+                if( event.modifiers & ( Qt.AltModifier | Qt.ControlModifier ) ) {
+                    root.toggleFullscreen();
+                    event.accepted = true;
+                }
+                break;
+            case Qt.Key_F:
+                if( ( event.modifiers & ( Qt.ShiftModifier | Qt.ControlModifier ) ) === ( Qt.ShiftModifier | Qt.ControlModifier ) ) {
                     root.toggleFullscreen();
                     event.accepted = true;
                 }
@@ -192,7 +198,7 @@ ApplicationWindow {
         }
     } */
 
-    Component {
+    /*Component {
         id: bigPictureView;
 
         BigPictureView {
@@ -210,7 +216,7 @@ ApplicationWindow {
 
             Component.onCompleted: { root.inputManager.emitConnectedDevices(); }
         }
-    }
+    }*/
 
     Component {
         id: mouseDrivenView;
