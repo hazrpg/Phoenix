@@ -1,18 +1,24 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.2
+import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.1
 import QtGraphicalEffects 1.0
 
 import vg.phoenix.models 1.0
 import vg.phoenix.themes 1.0
 
-ScrollView {
+import "qrc:/Widgets"
+
+// @disable-check M300
+PhxScrollView {
     id: platformsView;
 
     ListView {
         id: listView;
         spacing: 0;
         model: PlatformsModel { id: platformsModel; }
+
+        boundsBehavior: Flickable.StopAtBounds;
 
         highlight: Item {
             x: listView.currentItem.x;
@@ -23,15 +29,15 @@ ScrollView {
                 id: highlighterRectangle;
                 anchors { left: parent.left; top: parent.top; bottom: parent.bottom; }
                 width: 4;
-                height: 35;
-                color: PhxTheme.common.baseBackgroundColor;
+                height: PhxTheme.common.menuItemHeight;
+                color: PhxTheme.common.menuSelectedColor;
                 opacity: .5;
             }
         }
 
         header: Rectangle {
             color: "transparent";
-            height: 70;
+            height: PhxTheme.common.menuTitleHeight;
             anchors { left: parent.left; right: parent.right; }
 
             Label {
@@ -49,25 +55,35 @@ ScrollView {
         }
 
         delegate: Item {
-            height: 30;
+            height: PhxTheme.common.menuItemHeight;
             anchors { left: parent.left; right: parent.right; }
 
-            Image {
-                anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin:  17; }
-                smooth: true;
-                source: "systems/" + listView.model.get( index ) + ".svg";
-            }
+            // Image {
+            //    anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 17; }
+            //    smooth: true;
+            //    sourceSize { height: height; width: width; }
+            //    source: "systems/" + listView.model.get( index ) + ".svg";
+            // }
 
-            Label {
+            MarqueeText {
                 id: platformText;
+                anchors { verticalCenter: parent.verticalCenter; left: parent.left; right: parent.right; leftMargin: 45; rightMargin: 17; }
+                horizontalAlignment: Text.AlignLeft;
+
                 text: listView.model.get( index );
-                anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin:  45; }
-                font { pointSize: PhxTheme.selectionArea.basePixelSize; }
-                color: index === listView.currentIndex ? PhxTheme.common.baseBackgroundColor : PhxTheme.selectionArea.baseFontColor;
+                fontSize: PhxTheme.selectionArea.basePixelSize;
+
+                color: index === listView.currentIndex ? PhxTheme.common.menuSelectedColor : PhxTheme.selectionArea.baseFontColor;
+
+                spacing: 40;
+                running: index === listView.currentIndex || mouseArea.containsMouse;
+                pixelsPerFrame: 2.0;
             }
 
             MouseArea {
+                id: mouseArea;
                 anchors.fill: parent;
+                hoverEnabled: true;
                 onClicked: {
                     if ( contentArea.contentStackView.currentItem.objectName !== "PlatformsView" ) {
                         contentArea.contentStackView.push( { item: contentArea.boxartGrid, replace: true } );

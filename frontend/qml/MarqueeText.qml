@@ -12,11 +12,16 @@ Item {
     // Don't draw text outside of this Item's borders
     clip: true;
 
+    // Use the text's implicit height by default
+    // Width must always be explicitly set
+    height: text1.height;
+
     state: "idle";
 
     // Feel free to change these
     property string text: "Error!";
     property int fontSize: PhxTheme.common.baseFontSize;
+    property string fontFamily: PhxTheme.common.systemFontFamily;
     property color color: "white";
     property int spacing: 20;
     property bool running: false;
@@ -31,6 +36,8 @@ Item {
 
     property double textWidth: text2.contentWidth;
     property bool needsMarqueeAtAll: textWidth > width;
+
+    property int horizontalAlignment: Text.AlignHCenter;
 
     // Fully re-evaluate everything once we've finished loading
     Component.onCompleted: handleSituationChanged();
@@ -176,11 +183,11 @@ Item {
         x: 0;
 
         elide: running || !finishedAnimating ? Text.ElideNone : Text.ElideRight;
-        horizontalAlignment: needsMarqueeAtAll ? undefined : Text.AlignHCenter;
+        horizontalAlignment: needsMarqueeAtAll ? undefined : parent.horizontalAlignment;
 
         text: parent.text;
         color: parent.color;
-        font { pixelSize: parent.fontSize; }
+        font { pixelSize: parent.fontSize; family: fontFamily; }
     }
 
     // This text is only visible when animating
@@ -195,7 +202,7 @@ Item {
 
         text: parent.text;
         color: parent.color;
-        font { pixelSize: parent.fontSize; }
+        font { pixelSize: parent.fontSize; family: fontFamily; }
     }
 }
 

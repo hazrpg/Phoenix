@@ -18,6 +18,13 @@ Rectangle {
     z: parent.z + 1;
     anchors { bottom: parent.bottom }
 
+    /* Rectangle {
+        anchors { top: parent.top; topMargin: 0; }
+        width: parent.width;
+        height: 1;
+        color: Qt.rgba(255,255,255,.1);
+    } */
+
     Row {
         anchors.fill: parent;
         spacing: 0;
@@ -37,7 +44,7 @@ Rectangle {
                 height: 48;
                 horizontalAlignment: Image.AlignLeft;
                 source: "noartwork.png";
-                sourceSize { width: 400; height: 400; }
+                sourceSize { height: height; width: width; }
                 fillMode: Image.PreserveAspectFit;
             }
 
@@ -76,27 +83,27 @@ Rectangle {
         Rectangle {
             anchors { top: parent.top; bottom: parent.bottom; }
             color: "transparent";
-            width: 48;
-            Button {
+            width: 32;
+            Image {
                 anchors.centerIn: parent;
+                anchors.margins: 10;
                 width: parent.width;
-                iconName: "Play";
-                iconSource:  "play.svg";
-                style: ButtonStyle { background: Rectangle { color: "transparent"; } }
-                MouseArea {
-                    anchors.fill: parent;
-                    hoverEnabled: true;
-                    cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor;
-                    onClicked: {
-                        // Prevent user from clicking on anything while the transition occurs
-                        root.disableMouseClicks();
+                source:  "play.svg";
+                sourceSize { height: height; width: width; }
+            }
+            MouseArea {
+                anchors.fill: parent;
+                hoverEnabled: true;
+                cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor;
+                onClicked: {
+                    // Prevent user from clicking on anything while the transition occurs
+                    root.disableMouseClicks();
 
-                        // Destroy the compenent this MouseArea lives in
-                        layoutStackView.pop();
-                    }
-                    onEntered: { rootMouseArea.cursorShape = Qt.PointingHandCursor; }
-                    onExited: { rootMouseArea.cursorShape = Qt.ArrowCursor; }
+                    // Destroy the compenent this MouseArea lives in
+                    layoutStackView.pop();
                 }
+                onEntered: { rootMouseArea.cursorShape = Qt.PointingHandCursor; }
+                onExited: { rootMouseArea.cursorShape = Qt.ArrowCursor; }
             }
         }
     }
@@ -106,24 +113,20 @@ Rectangle {
 
         Rectangle {
             anchors { top: parent.top; bottom: parent.bottom; }
-            width: 50;
+            width: 40;
             color: "transparent";
 
-           // Close
-           Button {
+            // Close
+            Image {
                 anchors.centerIn: parent;
-                width: parent.width;
-                iconName: "Close";
-                iconSource: "close.svg";
-                style: ButtonStyle { background: Rectangle { color: "transparent"; } }
-                onPressedChanged: {
-                    if( pressed ) { root.gameViewObject.videoItem.slotStop(); }
-                }
+                width: 16;
+                height: 16;
+                source: "close.svg";
+                sourceSize { height: height; width: width; }
             }
             MouseArea {
                 anchors.fill: parent;
                 hoverEnabled: true;
-                cursorShape: containsMouse ? Qt.PointingHandCursor : Qt.ArrowCursor;
                 onEntered: { rootMouseArea.cursorShape = Qt.PointingHandCursor; }
                 onExited: { rootMouseArea.cursorShape = Qt.ArrowCursor; }
                 onClicked: { root.gameViewObject.videoItem.slotStop(); }

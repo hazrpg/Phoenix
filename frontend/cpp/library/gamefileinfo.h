@@ -14,7 +14,7 @@ namespace Library {
 
         struct HeaderData {
             QString result;
-            QString systemIndex;
+            QString phoenixSystemName;
             qint64 seekPosition;
             qint64 byteLength;
         };
@@ -25,7 +25,7 @@ namespace Library {
         };
 
         QString system() const;
-        QString sha1CheckSum() const;
+        QString crc32CheckSum() const;
         QString title() const;
         QString fullFilePath() const;
         QString timePlayed() const;
@@ -43,21 +43,18 @@ namespace Library {
         FileType fileType() const;
 
         static QStringList gameFilter();
-        QList<HeaderData> getPossibleHeaders( const QStringList &possibleSystems );
-        QString getRealSystem( const QList<HeaderData> &possibleHeaders );
+        HeaderData getPossibleHeaders( const QStringList &possibleSystems );
 
         void cache( const QString &location );
 
-        static QString getRealSystem( const QList<HeaderData> &possibleHeaders, const QString &localFile );
         void prepareMetadata();
 
     protected:
         FileType mFileType;
         QString mSystem;
-        QString mSha1Sum;
+        QString mCrc32Checksum;
         QString mTitle;
         QString mFullFilePath;
-        QString mCrc32Checksum;
         QString mArtworkUrl;
         QSqlQuery mQuery;
 

@@ -33,7 +33,7 @@ LibraryModel::LibraryModel( LibraryInternalDatabase &db, QObject *parent )
     mRoleNames.insert( FileNameRole, QByteArrayLiteral( "absoluteFilePath" ) );
     mRoleNames.insert( SystemPathRole, QByteArrayLiteral( "systemPath" ) );
     mRoleNames.insert( RowIDRole, QByteArrayLiteral( "rowIndex" ) );
-    mRoleNames.insert( SHA1Role, QByteArrayLiteral( "sha1" ) );
+    mRoleNames.insert( Crc32Role, QByteArrayLiteral( "crc32Checksum" ) );
     mRoleNames.insert( CoreFilePathRole, QByteArrayLiteral( "coreFilePath" ) );
 
     setEditStrategy( QSqlTableModel::OnManualSubmit );
@@ -175,7 +175,7 @@ void LibraryModel::setFilter( const QString table, const QString row, const QVar
 
     auto tableRow = table + QStringLiteral( "." ) + row;
 
-    filterParameterMap.insert( tableRow, value.toString().toLower() );
+    filterParameterMap.insert( tableRow, value.toString() );
 
     QSqlTableModel::setFilter( createFilter() );
 }
@@ -261,14 +261,14 @@ void LibraryModel::handleUpdateGame( const GameData metaData ) {
     static const auto updateDataStatement = QStringLiteral( "UPDATE " )
                                             + LibraryInternalDatabase::tableName
                                             + QStringLiteral( " SET artworkUrl = ?" )
-                                            + QStringLiteral( " WHERE sha1 = ? " );
+                                            + QStringLiteral( " WHERE crc32Checksum = ? " );
 
     QSqlQuery query( database() );
 
     query.prepare( updateDataStatement );
 
     query.addBindValue( metaData.artworkUrl );
-    query.addBindValue( metaData.sha1 );
+    query.addBindValue( metaData.crc32Checksum);
 
     if( !query.exec() ) {
         qCWarning( phxLibrary ) << "Sql Update Error: " << query.lastError().text();
@@ -324,7 +324,7 @@ void LibraryModel::handleInsertGame( const GameData importData ) {
 
     static const auto statement = QStringLiteral( "INSERT INTO " )
                                   + LibraryInternalDatabase::tableName
-                                  + QStringLiteral( " (title, system, absoluteFilePath, timePlayed, sha1, artworkUrl) " )
+                                  + QStringLiteral( " (title, system, absoluteFilePath, timePlayed, crc32Checksum, artworkUrl) " )
                                   + QStringLiteral( "VALUES (?,?,?,?,?,?)" );
 
 
@@ -359,11 +359,11 @@ void LibraryModel::handleInsertGame( const GameData importData ) {
     query.addBindValue( importData.system );
     query.addBindValue( importData.filePath );
     query.addBindValue( importData.timePlayed );
-    query.addBindValue( importData.sha1 );
+    query.addBindValue( importData.crc32Checksum );
     query.addBindValue( importData.artworkUrl );
 
     if( !query.exec() ) {
-        qDebug() << "SQL Insertion Error: " << query.lastError().text() << query.lastQuery() << query.boundValues();
+        qDebug() << "SQL Insertion Error: " << query.lastError().text() << query.lastQuery();
     }
 
     // Limit how many times the progress is updated, to reduce strain on the render thread.

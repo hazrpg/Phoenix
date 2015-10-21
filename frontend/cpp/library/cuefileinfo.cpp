@@ -34,13 +34,13 @@ bool CueFileInfo::isValid() {
 
             auto gameInfo = GameFileInfo( localFile );
 
-            auto possibleHeaders = gameInfo.getPossibleHeaders( possibleSystemsList );
-            mSystem = gameInfo.getRealSystem( possibleHeaders );
+            auto header = gameInfo.getPossibleHeaders( possibleSystemsList );
+            mSystem = header.phoenixSystemName;
         }
     }
 
     mFullFilePath = QStringLiteral( "cue://" ) + canonicalFilePath();
-    mSha1Sum = getCheckSum( canonicalFilePath() );
+    mCrc32Checksum = getCheckSum( canonicalFilePath() );
 
     return exists;
 }

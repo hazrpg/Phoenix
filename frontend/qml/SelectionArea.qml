@@ -27,9 +27,14 @@ Item {
         anchors.fill: parent;
         color: PhxTheme.common.primaryBackgroundColor;
 
-        Row {
-            anchors { top: parent.top; bottom: parent.bottom; right: parent.right; }
-        }
+        /* Rectangle {
+            anchors { right: parent.right; rightMargin: -1; }
+            width: 1;
+            height: parent.height;
+            color: Qt.rgba(255,255,255,.1);
+        } */
+
+        Row { anchors { top: parent.top; bottom: parent.bottom; right: parent.right; } }
 
         ColumnLayout {
             id: selectionColumnLayout;
@@ -130,6 +135,7 @@ Item {
                     Image {
                         height: 24; width: height;
                         source: imageSource;
+                        sourceSize { height: height; width: width; }
                         fillMode: Image.PreserveAspectFit;
                         smooth: false;
                         anchors { centerIn: parent; }
@@ -144,7 +150,9 @@ Item {
                     }
 
                     MouseArea {
+                    // NativeTooltip {
                         anchors.fill: parent;
+                        // text: label;
                         onClicked: {
                             switch( index ) {
                             case 0:

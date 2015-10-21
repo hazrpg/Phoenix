@@ -8,6 +8,8 @@ import vg.phoenix.cache 1.0
 import vg.phoenix.backend 1.0
 import vg.phoenix.themes 1.0
 
+import "qrc:/Widgets"
+
 Rectangle {
     id: boxartGridBackground;
     DropdownMenu { id: dropDownMenu; }
@@ -161,7 +163,7 @@ Rectangle {
                             visible: true;
                             asynchronous: true;
                             source: imageCacher.cachedUrl == "" ? "noartwork.png" : imageCacher.cachedUrl;
-                            sourceSize { width: 450; height: 450; }
+                            sourceSize { height: contentArea.contentSlider.maximumValue; width: contentArea.contentSlider.maximumValue; }
                             verticalAlignment: Image.AlignBottom;
                             fillMode: Image.PreserveAspectFit;
 
@@ -177,6 +179,25 @@ Rectangle {
                                 }
                             }
 
+                            // BoxArt: Glass line effect
+                            Rectangle {
+                                anchors { bottom: parent.bottom; bottomMargin: parent.paintedHeight - 1; horizontalCenter: parent.horizontalCenter; }
+                                width: parent.paintedWidth ;
+                                height: 1;
+                                color: Qt.rgba(255,255,255,.25);
+                            }
+
+                            /* BoxArt: Inner Border
+                            Rectangle {
+                                anchors { bottom: parent.bottom; horizontalCenter: parent.horizontalCenter; }
+                                z: gridItemImage.z + 1;
+                                height: parent.paintedHeight;
+                                width: parent.paintedWidth;
+                                border.color: Qt.rgba(0,0,0,.75);
+                                border.width: 1;
+                                color: "transparent";
+                            } */
+
                             // BoxArt: Outer Border
                             Rectangle {
                                 anchors { bottom: parent.bottom; topMargin: -border.width; bottomMargin: -border.width; leftMargin: -border.width; rightMargin: -border.width; horizontalCenter: parent.horizontalCenter; }
@@ -187,10 +208,9 @@ Rectangle {
                                 border.color: index === gridView.currentIndex ? PhxTheme.common.boxartSelectedBorderColor : PhxTheme.common.boxartNormalBorderColor;
                                 border.width: 2 + (contentArea.contentSlider.value/50);
                                 color: "transparent";
-                                radius: 3;
                             }
 
-                            // BoxArt Shadow
+                            /* BoxArt Shadow
                             RectangularGlow {
                                 anchors.bottom: parent.bottom;
                                 anchors.horizontalCenter: parent.horizontalCenter;
@@ -201,12 +221,12 @@ Rectangle {
                                 color: "#50000000";
                                 cornerRadius: glowRadius;
                                 z: imageBackground.z - 1;
-                            }
+                            } */
 
                             ImageCacher {
                                 id: imageCacher;
                                 imageUrl: artworkUrl;
-                                identifier: sha1;
+                                identifier: crc32Checksum;
                                 Component.onCompleted: cache();
                             }
 
@@ -224,7 +244,7 @@ Rectangle {
                         text: title;
                         spacing: contentArea.contentSlider.value / 10;
                         color: PhxTheme.common.highlighterFontColor;
-                        fontSize: PhxTheme.common.baseFontSize;
+                        fontSize: PhxTheme.common.boxartFontSize;
                         running: index === gridView.currentIndex || gridItemMouseArea.containsMouse;
                         pixelsPerFrame: contentArea.contentSlider.value / 100;
 
