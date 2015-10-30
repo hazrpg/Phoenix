@@ -20,23 +20,14 @@ Item {
             id: backgroundBlur;
             anchors.fill: parent;
             color: PhxTheme.common.baseBackgroundColor;
-            // Image { smooth: true; source: "bg3.png"; horizontalAlignment: Image.AlignLeft; verticalAlignment: Image.AlignTop; anchors.fill: parent; fillMode: Image.Tile; }
-            // Image { smooth: true; source: "bg1.svg"; horizontalAlignment: Image.AlignLeft; verticalAlignment: Image.AlignTop; anchors.fill: parent; fillMode: Image.PreserveAspectFit; }
-            // Image { smooth: true; source: "bg0.png"; horizontalAlignment: Image.AlignLeft; verticalAlignment: Image.AlignTop; anchors.fill: parent; fillMode: Image.Tile; }
-            Image { smooth: true; source: "bg-t.jpg"; horizontalAlignment: Image.AlignLeft; verticalAlignment: Image.AlignTop; anchors.fill: parent; fillMode: Image.PreserveAspectCrop; opacity: .75; }
+            // Image { smooth: true; source: "bg-t.jpg"; horizontalAlignment: Image.AlignLeft; verticalAlignment: Image.AlignTop; anchors.fill: parent; fillMode: Image.PreserveAspectCrop; }
          }
-         /* FastBlur {
-            id: blurEffect;
-            anchors.fill: parent;
-            source: backgroundBlur;
-            radius: 0;
-         } */
 
         RowLayout {
             id: gameSelectionPane;
             anchors { fill: parent; }
             spacing: 0;
-            anchors.bottomMargin: root.gameViewObject.videoItem.coreState === Core.STATEPAUSED ? gameSuspendedArea.height : 0;
+            // anchors.bottomMargin: root.gameViewObject.videoItem.coreState === Core.STATEPAUSED ? gameSuspendedArea.height : 0;
 
             SelectionArea {
                 id: selectionArea;
@@ -50,12 +41,6 @@ Item {
                 anchors { top: parent.top; bottom: parent.bottom; }
                 Layout.fillWidth: true;
             }
-        }
-
-        GameSuspendedArea {
-            id: gameSuspendedArea;
-            objectName: "GameSuspendedArea";
-            visible: root.gameViewObject.videoItem.coreState === Core.STATEPAUSED;
         }
     }
 }

@@ -3,7 +3,9 @@
 
 #include "frontendcommon.h"
 
-#include "systemdatabase.h"
+#include "coremodel.h"
+#include "userdatabase.h"
+#include "libretrodatabase.h"
 #include "logging.h"
 #include "phxpaths.h"
 #include "archivefileinfo.h"

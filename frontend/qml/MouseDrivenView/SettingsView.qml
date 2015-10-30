@@ -8,16 +8,13 @@ import vg.phoenix.themes 1.0
 
 // @disable-check M300
 PhxScrollView {
-    width: 100;
-    height: 62;
-
     ListView {
         id: listView;
         spacing: 0;
         model: ListModel {
             id: settingsModel;
-            ListElement { section: "Input (coming soon...)"; }
             ListElement { section: "Library"; }
+            // ListElement { section: "Input (coming soon...)"; }
             // ListElement { section: "Video"; }
             // ListElement { section: "Audio"; }
         }
@@ -33,14 +30,14 @@ PhxScrollView {
                 id: highlighterRectangle;
                 anchors { top: parent.top; bottom: parent.bottom; left: parent.left; right: parent.right; }
                 height: PhxTheme.common.menuItemHeight;
-                color: Qt.rgba(255,2555,255,.1);
+                color: PhxTheme.common.menuItemBackgroundColor;
 
-                Rectangle {
+                /* Rectangle {
                     anchors { top: parent.top; bottom: parent.bottom; left: parent.left; }
                     width: 4;
                     height: parent.height;
                     color: PhxTheme.common.menuItemHighlight;
-                }
+                } */
             }
         }
 
@@ -50,8 +47,8 @@ PhxScrollView {
 
             Text {
                 text: qsTr( "Settings" );
-                anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 17; }
-                font { pointSize: PhxTheme.selectionArea.headerFontSize; }
+                anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: PhxTheme.common.menuItemMargin; }
+                font { pixelSize: PhxTheme.selectionArea.headerFontSize; }
                 color: PhxTheme.selectionArea.highlightFontColor;
             }
         }
@@ -63,13 +60,12 @@ PhxScrollView {
 
             MarqueeText {
                 id: sectionText;
-                anchors { verticalCenter: parent.verticalCenter; left: parent.left; right: parent.right; leftMargin: 45; rightMargin: 17; }
+                anchors { verticalCenter: parent.verticalCenter; left: parent.left; right: parent.right; leftMargin: PhxTheme.common.menuItemMargin; rightMargin: PhxTheme.common.menuItemMargin; }
                 horizontalAlignment: Text.AlignLeft;
 
                 text: section;
-                fontSize: PhxTheme.selectionArea.basePixelSize;
+                fontSize: PhxTheme.common.baseFontSize;
                 color: index === listView.currentIndex ? PhxTheme.common.baseBackgroundColor : PhxTheme.selectionArea.baseFontColor;
-
 
                 spacing: 40;
                 running: index === listView.currentIndex || mouseArea.containsMouse;
@@ -82,14 +78,16 @@ PhxScrollView {
                 hoverEnabled: true;
                 onClicked: {
                     listView.currentIndex = index
-                    switch ( index ) {
-                    case 0:
-                        // contentArea.contentStackView.push( { item: contentArea.contentInputView, replace: true } );
+                    switch ( section ) {
+                    case "Library":
+                        if( contentArea.contentStackView.currentItem.objectName !== "LibrarySettingsView") {
+                            contentArea.contentStackView.push( { item: contentArea.contentLibrarySettingsView, replace: true } );
+                        }
                         break;
-                    case 1:
-                        contentArea.contentStackView.push( { item: contentArea.contentLibraryView, replace: true } );
-                        break;
-                    case 2:
+                    case "Input":
+                        if( contentArea.contentStackView.currentItem.objectName !== "InputSettingsView") {
+                            // contentArea.contentStackView.push( { item: contentArea.contentInputSettingsView, replace: true } );
+                        }
                         break;
                     default:
                         break;

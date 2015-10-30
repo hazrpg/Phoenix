@@ -106,6 +106,19 @@ Item {
                 interactive: false;
                 orientation: ListView.Horizontal;
 
+                highlight: Item {
+                    x: selectionAreaToolbar.currentItem.x;
+                    y: selectionAreaToolbar.currentItem.y;
+                    anchors.fill: selectionAreaToolbar.currentItem;
+
+                        Rectangle {
+                            anchors { bottom: parent.bottom; left: parent.left; right: parent.right; }
+                            width: selectionAreaToolbar.width / selectionAreaToolbar.count;
+                            height: 4;
+                            color: PhxTheme.common.menuItemHighlight;
+                        }
+                }
+
                 model: ListModel {
                     ListElement { bgColor: "white"; label: "Games"; imageSource: "games.svg"; }
                     ListElement { bgColor: "white"; label: "Favorites"; imageSource: "collections.svg"; }
@@ -139,7 +152,7 @@ Item {
                         anchors.centerIn: parent;
                         text: label;
                         color: PhxTheme.common.baseFontColor;
-                        font { pointSize: PhxTheme.selectionArea.basePixelSize; }
+                        font { pixelSize: PhxTheme.common.baseFontSize; }
                     }
 
                     MouseArea {
@@ -155,6 +168,7 @@ Item {
                                         contentArea.contentStackView.push( { item: contentArea.contentBoxartGrid, replace: true } );
                                     }
                                 }
+                                selectionAreaToolbar.currentIndex = index;
                                 break;
 
                             case 1:
@@ -164,15 +178,17 @@ Item {
                                         contentArea.contentStackView.push( { item: contentArea.contentBoxartGrid, replace: true } );
                                     }
                                 }
+                                selectionAreaToolbar.currentIndex = index;
                                 break;
 
                             case 2:                                
                                 if ( sectionsAreaStackView.currentItem.objectName !== "SettingsView" ) {
                                     sectionsAreaStackView.push( { item: settingsView, replace: true } );
-                                    if( contentArea.contentStackView.currentItem.objectName !== "InputView") {
-                                        // contentArea.contentStackView.push( { item: contentArea.contentInputView, replace: true } );
+                                    if( contentArea.contentStackView.currentItem.objectName !== "LibrarySettingsView") {
+                                        contentArea.contentStackView.push( { item: contentArea.contentLibrarySettingsView, replace: true } );
                                     }
                                 }
+                                selectionAreaToolbar.currentIndex = index;
                                 break;
 
                             case 3:

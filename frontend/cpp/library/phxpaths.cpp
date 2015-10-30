@@ -88,7 +88,7 @@ QString PhxPaths::qmlMetadataLocation() {
     return PhxPaths::metadataLocation();
 }
 
-void PhxPaths::createAllPaths() {
+void PhxPaths::initPaths() {
 
     PhxPaths::mBinLocation = QCoreApplication::applicationDirPath();
 
@@ -104,7 +104,6 @@ void PhxPaths::createAllPaths() {
         PhxPaths::mMetadataLocation = PhxPaths::mBinLocation % '/' % QStringLiteral( "Metadata" ) % '/';
 
         PhxPaths::mUserDataLocation = PhxPaths::mBinLocation % '/' % QStringLiteral( "User Data" );
-        PhxPaths::mCoverArtCacheLocation = PhxPaths::mUserDataLocation % '/' % QStringLiteral( "Cover Art Cache" );
 
         // Create a core and game folder if they do not exist
         QDir coreDir( PhxPaths::mCoreLocation );
@@ -130,7 +129,7 @@ void PhxPaths::createAllPaths() {
         PhxPaths::mCoreLocation = QStringLiteral( "C:/Program Files/Libretro/Cores" );
         PhxPaths::mMetadataLocation = PhxPaths::mResourceLocation % '/' % QStringLiteral( "Metadata" ) % '/';
 
-        PhxPaths::mUserDataLocation = QStandardPaths::writableLocation( QStandardPaths::AppLocalDataLocation ) % '/' % QApplication::applicationName();
+        PhxPaths::mUserDataLocation = QStandardPaths::writableLocation( QStandardPaths::AppLocalDataLocation ) % '/' % QGuiApplication::applicationName();
 #endif
 #ifdef Q_OS_MACX
         PhxPaths::mResourceLocation = PhxPaths::mBinLocation;
@@ -152,6 +151,7 @@ void PhxPaths::createAllPaths() {
 
     PhxPaths::mSaveLocation = PhxPaths::mUserDataLocation % '/' % QStringLiteral( "Saves" ) % '/';
     PhxPaths::mBiosLocation = PhxPaths::mUserDataLocation % '/' % QStringLiteral( "BIOS" ) % '/';
+    PhxPaths::mCoverArtCacheLocation = PhxPaths::mUserDataLocation % '/' % QStringLiteral( "Cover Art Cache" );
 
     QDir userDir( PhxPaths::mUserDataLocation );
     QDir saveDir( PhxPaths::mSaveLocation );

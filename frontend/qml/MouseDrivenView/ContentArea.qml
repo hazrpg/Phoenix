@@ -7,6 +7,7 @@ import QtGraphicalEffects 1.0
 
 import vg.phoenix.models 1.0
 import vg.phoenix.themes 1.0
+import vg.phoenix.backend 1.0
 
 Rectangle {
     id: contentArea;
@@ -15,8 +16,8 @@ Rectangle {
     property alias contentLibraryModel: libraryModel;
     property alias contentStackView: contentAreaStackView;
     property alias contentBoxartGrid: boxArtGridComponent
-    property alias contentLibraryView: libraryView;
-    property alias contentInputView: inputView;
+    property alias contentLibrarySettingsView: librarySettingsView;
+    property alias contentInputSettingsView: inputSettingsView;
     property alias contentSlider: zoomSlider;
     property alias boxartGrid: boxArtGridComponent;
 
@@ -27,13 +28,12 @@ Rectangle {
 
     Rectangle {
         id: headerArea;
-        anchors { top: parent.top; left: parent.left; right: parent.right;}
-        color: "transparent";
-        z: 100;
+        anchors { top: parent.top; left: parent.left; right: parent.right; }
+        color: "transparent"
         height: 70;
 
         Rectangle {
-            anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 35; }
+            anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 30; }
             color: "#FFF";
             width: 250;
             radius: height/2;
@@ -42,7 +42,7 @@ Rectangle {
             PhxSearchBar {
                 anchors { left: parent.left; leftMargin: 10; }
                 id: searchBar;
-                font.pixelSize: 14;
+                font.pixelSize: PhxTheme.common.baseFontSize;
                 placeholderText: "";
                 width: parent.width - 50;
                 height: parent.height;
@@ -59,7 +59,7 @@ Rectangle {
             }
 
             Image {
-                anchors { right: parent.right; rightMargin: searchBar.anchors.leftMargin; verticalCenter: parent.verticalCenter; }
+                anchors { right: parent.right; rightMargin: 10; verticalCenter: parent.verticalCenter; }
                 width: 20;
                 height: width;
                 sourceSize { height: height; width: width; }
@@ -132,12 +132,12 @@ Rectangle {
             Rectangle {
                 anchors { top: parent.top; bottom: parent.bottom; }
                 color: "transparent";
-                width: 40;
+                width: 24;
 
                 Image {
                     anchors.centerIn: parent;
-                    height: 20;
-                    width: height;
+                    height: 24;
+                    width: 24;
                     sourceSize { height: height; width: width; }
                     source: screenIcon;
                     MouseArea {
@@ -216,26 +216,14 @@ Rectangle {
 
     LibraryModel {
         id: libraryModel;
-
-        function dragEvent( drag ) {
-            if ( drag.hasUrls ) {
-                handleDraggedUrls( drag.urls );
-            }
-        }
-
-        function dropEvent( drop ) {
-            handleDroppedUrls();
-        }
-
-        function containsEvent() {
-            handleContainsDrag( rootDropArea.containsDrag );
-        }
+        function dragEvent( drag ) { if ( drag.hasUrls ) { handleDraggedUrls( drag.urls ); } }
+        function dropEvent( drop ) { handleDroppedUrls(); }
+        function containsEvent() { handleContainsDrag( rootDropArea.containsDrag ); }
 
         Component.onCompleted: {
             rootDropArea.onEntered.connect( dragEvent );
             rootDropArea.onDropped.connect( dropEvent );
             rootDropArea.onContainsDragChanged.connect( containsEvent );
-
             libraryModel.startWorkerThread();
         }
     }
@@ -244,11 +232,10 @@ Rectangle {
         id: contentAreaStackView;
         initialItem: boxArtGridComponent;
         anchors.fill: parent;
+        anchors.bottomMargin: root.gameViewObject.videoItem.coreState === Core.STATEPAUSED ? gameSuspendedArea.height : 0;
 
         delegate: StackViewDelegate {
-            function transitionFinished( properties ) {
-                properties.exitItem.opacity = 1;
-            }
+            function transitionFinished( properties ) { properties.exitItem.opacity = 1; }
 
             pushTransition: StackViewTransition {
                 PropertyAnimation {
@@ -283,15 +270,18 @@ Rectangle {
     }
 
     Component {
-        id: inputView;
-        InputView { objectName: "InputView" }
+        id: inputSettingsView;
+        InputSettingsView { objectName: "InputSettingsView"; }
     }
 
     Component {
-        id: libraryView;
-        LibraryView {
+        id: librarySettingsView;
+        LibrarySettingsView { objectName: "LibrarySettingsView"; }
 
-        }
-
+    }
+    GameSuspendedArea {
+        id: gameSuspendedArea;
+        objectName: "GameSuspendedArea";
+        visible: root.gameViewObject.videoItem.coreState === Core.STATEPAUSED;
     }
 }

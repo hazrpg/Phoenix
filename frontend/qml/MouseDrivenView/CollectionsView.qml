@@ -24,15 +24,13 @@ PhxScrollView {
 
             Text {
                 text: qsTr( "Collections" );
-                anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: 17; }
-                font { pointSize: PhxTheme.selectionArea.headerFontSize; }
+                anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: PhxTheme.common.menuItemMargin; }
+                font { pixelSize: PhxTheme.selectionArea.headerFontSize; }
                 color: PhxTheme.selectionArea.highlightFontColor;
             }
 
             Image {
-                anchors { verticalCenter: parent.verticalCenter; right: parent.right; rightMargin: 17; }
-                // text: qsTr( "Add" );
-                anchors.centerIn: parent;
+                anchors { verticalCenter: parent.verticalCenter; right: parent.right; rightMargin: PhxTheme.common.menuItemMargin; }
                 height: 20;
                 width: height;
                 sourceSize { height: height; width: width; }
@@ -54,7 +52,7 @@ PhxScrollView {
             id: listViewDelegate;
             anchors { left: parent.left; right: parent.right; }
             color: "transparent";
-            height: 25;
+            height: PhxTheme.common.menuItemHeight;
 
             states: [
                 State {
@@ -86,28 +84,29 @@ PhxScrollView {
                 id: platformText;
                 text: collectionName;
                 readOnly: true;
-                anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin:  24; }
+                anchors { verticalCenter: parent.verticalCenter; left: parent.left; leftMargin: PhxTheme.common.menuItemMargin; }
+                style: TextFieldStyle {
+                    font { pixelSize: PhxTheme.common.baseFontSize; }
+                    textColor: PhxTheme.common.baseFontColor;
+                    background: Rectangle {
+                        color: "transparent";
+                        border.width: 0;
+                    }
+                }
 
                 onAccepted: {
                     collectionsModel.set( collectionID, platformText.text );
                     readOnly = true;
                     focus = false;
                 }
-
-                font { pointSize: PhxTheme.selectionArea.basePixelSize; }
-                textColor: PhxTheme.common.baseFontColor;
-
             }
 
             Button {
                 visible: collectionID !== 0;
                 z: mouseArea.z + 1;
-                anchors { right: parent.right; verticalCenter: parent.verticalCenter; rightMargin: 12; }
+                anchors { right: parent.right; verticalCenter: parent.verticalCenter; rightMargin: PhxTheme.common.menuItemMargin; }
                 text: "Remove";
-
-                onClicked: {
-                    collectionsModel.remove( collectionID );
-                }
+                onClicked: { collectionsModel.remove( collectionID ); }
             }
 
             MouseArea {

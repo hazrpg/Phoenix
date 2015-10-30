@@ -13,6 +13,7 @@ Rectangle {
     color: "transparent";
     // color: Qt.rgba(0,0,0,0.5);
     // Image {  smooth: true; source: "bg.svg"; anchors.fill: parent; fillMode: Image.TileHorizontally; verticalAlignment: Image.AlignLeft; sourceSize { height: height; width: width; } }
+
     property int volumeValue: 1;
 
     //  Volumen Icon changer
@@ -40,7 +41,6 @@ Rectangle {
         height: 45;
         color: Qt.rgba(0,0,0,0.75);
         radius: 1;
-        // color: "transparent";
 
         Rectangle {
             width: parent.width - 2;
@@ -86,13 +86,12 @@ Rectangle {
 
                 Rectangle {
                     id: volIcon;
-                    anchors { top: parent.top; bottom: parent.bottom; }
-                    width: 32;
+                    anchors { top: parent.top; bottom: parent.bottom; margins: 10; }
+                    width: 28;
                     color: "transparent"
 
                     Image {
                         anchors.centerIn: parent;
-                        anchors.margins: 10;
                         width: parent.width;
                         source: gameActionBar.volumeIcon;
                         sourceSize { height: height; width: width; }
@@ -171,10 +170,13 @@ Rectangle {
                 color: "transparent"
                 width: 40;
 
-                Label {
+                Image {
                     anchors.centerIn: parent;
-                    color: PhxTheme.normalFontColor;
-                    text: qsTr( "Blur" );
+                    anchors.margins: 10;
+                    width: 24;
+                    height: 24;
+                    sourceSize { height: height; width: width; }
+                    source: "blur.svg";
                 }
 
                 MouseArea {

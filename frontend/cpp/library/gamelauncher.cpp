@@ -8,8 +8,14 @@ GameLauncher::GameLauncher( QObject *parent ) :
 
 const QString GameLauncher::getDefaultCore( const QString system ) {
 
-    const static QString statement = QStringLiteral( "SELECT defaultCore FROM systems WHERE phoenixSystemName = ?" );
-    auto query = QSqlQuery( Library::SystemDatabase::database() );
+    // Let the constructor run so it'll make sure default cores are set for any new systems that might not have had their
+    // defaults written to the user database yet because the user has not opened that settings page
+    // Ugly hack or good idea?
+    CoreModel *model = new CoreModel();
+    delete model;
+
+    const static QString statement = QStringLiteral( "SELECT defaultCore FROM defaultCores WHERE system = ?" );
+    auto query = QSqlQuery( UserDatabase::instance()->database() );
     query.prepare( statement );
     query.addBindValue( system );
 
@@ -38,11 +44,13 @@ const QString GameLauncher::getDefaultCore( const QString system ) {
 bool GameLauncher::verify( const QString system, QString rom ) {
 
     bool coreExists = QFile::exists( system );
+
     if( !coreExists ) {
         qCWarning( phxLibrary ) << system << " does not exist. Launch will fail...";
     }
 
     bool gameExists = QFile::exists( rom );
+
     if( !gameExists ) {
         qCWarning( phxLibrary ) << rom << " does not exist. Launch will fail...";
     }
@@ -50,13 +58,13 @@ bool GameLauncher::verify( const QString system, QString rom ) {
     return coreExists && gameExists;
 }
 
-QString GameLauncher::trimmedGame(QString game) {
+QString GameLauncher::trimmedGame( QString game ) {
 
-    if ( game.startsWith( QStringLiteral( "file://" ) ) ) {
+    if( game.startsWith( QStringLiteral( "file://" ) ) ) {
         game.remove( QStringLiteral( "file://" ) );
-    } else if ( game.startsWith( QStringLiteral( "cue://" ) ) ) {
+    } else if( game.startsWith( QStringLiteral( "cue://" ) ) ) {
         game.remove( QStringLiteral( "cue://" ) );
-    } else if ( game.startsWith( QStringLiteral( "zip://" ) ) ) {
+    } else if( game.startsWith( QStringLiteral( "zip://" ) ) ) {
         game.remove( QStringLiteral( "zip://" ) );
         auto nameList = game.split( Library::ArchiveFileInfo::delimiter() );
 
@@ -65,7 +73,7 @@ QString GameLauncher::trimmedGame(QString game) {
         game = QDir::tempPath() + "/" + baseDestName;
 
         qDebug() << "temp dir: " << game;
-        qDebug() << "return: "<< JlCompress::extractFile( nameList.first(), nameList.at( 1 ), game );
+        qDebug() << "return: " << JlCompress::extractFile( nameList.first(), nameList.at( 1 ), game );
 
     }
 
