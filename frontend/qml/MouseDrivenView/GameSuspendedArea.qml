@@ -106,7 +106,7 @@ Rectangle {
                     layoutStackView.pop();
 
                     // Resume game
-                    root.gameView.videoItem.slotResume();
+                    root.gameView.videoItem.play();
                 }
                 onEntered: { rootMouseArea.cursorShape = Qt.PointingHandCursor; }
                 onExited: { rootMouseArea.cursorShape = Qt.ArrowCursor; }
@@ -135,7 +135,7 @@ Rectangle {
                 hoverEnabled: true;
                 onEntered: { rootMouseArea.cursorShape = Qt.PointingHandCursor; }
                 onExited: { rootMouseArea.cursorShape = Qt.ArrowCursor; }
-                onClicked: { root.gameViewObject.videoItem.slotStop(); }
+                onClicked: { root.gameViewObject.videoItem.stop(); }
             }
         }
     }

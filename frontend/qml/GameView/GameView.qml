@@ -5,6 +5,7 @@ import QtQuick.Window 2.0
 
 import vg.phoenix.backend 1.0
 import vg.phoenix.themes 1.0
+import vg.phoenix.paths 1.0
 
 // Without deleting this component after every play session, we run the risk of a memory link from the core pointer not being cleared properly.
 // This issue needs to be fixed.
@@ -14,10 +15,11 @@ Rectangle {
     color: PhxTheme.common.gameViewBackgroundColor;
 
     // Automatically set by VideoItem, true if a game is loaded and unpaused
-    property bool running: videoItem.running;
-    property alias coreState: videoItem.coreState;
-    property alias loadedGame: videoItem.game;
+    property bool running: videoItem.state === Core.PLAYING;
+    property alias coreState: videoItem.state;
+    // property alias loadedGame: videoItem.source["game"];
     property alias videoItem: videoItem;
+    property alias videoOutput: videoOutput;
 
     // A small workaround to guarantee that the core and game are loaded in the correct order
     property var coreGamePair: {
@@ -26,16 +28,30 @@ Rectangle {
         , "title": ""
     };
 
-    // Changing this property triggers essentially launches the given game with the given core immediately
     onCoreGamePairChanged: {
 
         if ( coreGamePair[ "corePath" ] !== "" ) {
             console.log( "Attempting to load core: " + gameView.coreGamePair[ "corePath" ] );
             console.log( "Attempting to load game: " + gameView.coreGamePair[ "gamePath" ] );
+
+            var dict = {};
+            dict[ "type" ] = "libretro";
+            dict[ "core" ] = gameView.coreGamePair[ "corePath" ];
+            dict[ "game" ] = gameView.coreGamePair[ "gamePath" ];
+            dict[ "systemPath" ] = PhxPaths.qmlBiosLocation();
+            dict[ "savePath" ] = PhxPaths.qmlSaveLocation();
+
+            videoItem.source = dict;
         }
 
-        videoItem.libretroCore = coreGamePair[ "corePath" ];
-        videoItem.game = coreGamePair[ "gamePath" ];
+    }
+
+    // Call load() once the new source info makes its way to the Core, which lives in another thread
+    Connections {
+        target: videoItem;
+        onSourceChanged: {
+            videoItem.load();
+        }
     }
 
     // A logo
@@ -80,51 +96,78 @@ Rectangle {
     Rectangle {
         id: videoItemContainer;
         anchors { top: parent.top; bottom: parent.bottom; horizontalCenter: parent.horizontalCenter; }
-        width: height * videoItem.aspectRatio;
+        width: height * videoOutput.aspectRatio;
         color: "black";
-        opacity: 0;
+        opacity: 0.0;
 
         Behavior on opacity { NumberAnimation { duration: 250; } }
 
-        VideoItem {
+        CoreControl {
             id: videoItem;
-            anchors.fill: parent;
+            Component.onCompleted: {
+                this.videoOutput = videoOutput;
+                this.inputManager = root.inputManager;
+            }
 
-            onCoreStateChanged: {
-                switch( coreState ) {
-                    case Core.STATEUNINITIALIZED:
+            // Use this to automatically play once loaded
+            property bool firstLaunch: true;
+
+            onStateChanged: {
+                switch( state ) {
+                    case Core.STOPPED:
+                        videoItemContainer.opacity = 0.0;
                         resetCursor();
                         cursorTimer.stop();
                         break;
-                    case Core.STATEREADY:
+
+                    case Core.LOADING:
+                        videoItemContainer.opacity = 0.0;
+                        resetCursor();
+                        cursorTimer.stop();
+                        break;
+
+                    case Core.PLAYING:
                         rootMouseArea.cursorShape = Qt.BlankCursor;
 
                         // Show the game content
                         videoItemContainer.opacity = 1.0;
 
                         // Let the window be resized even smaller than the default minimum size according to the aspect ratio
-                        root.minimumWidth = Math.min( root.defaultMinWidth, root.defaultMinWidth / aspectRatio / 2);
-                        root.minimumHeight = Math.min( root.defaultMinHeight, root.defaultMinHeight / aspectRatio / 2);
+                        root.minimumWidth = Math.min( root.defaultMinWidth, root.defaultMinWidth / videoOutput.aspectRatio / 2);
+                        root.minimumHeight = Math.min( root.defaultMinHeight, root.defaultMinHeight / videoOutput.aspectRatio / 2);
 
                         break;
-                    case Core.STATEFINISHED:
+
+                    case Core.PAUSED:
+                        if( firstLaunch ) {
+                            console.log( "Autoplay activated" );
+                            firstLaunch = false;
+                            play();
+                        }
+
+                        videoItemContainer.opacity = 0.0;
                         resetCursor();
                         cursorTimer.stop();
                         break;
-                    case Core.STATEERROR:
-                        break;
-                    case Core.STATEPAUSED:
+
+                    case Core.UNLOADING:
+                        firstLaunch = true;
+                        videoItemContainer.opacity = 0.0;
                         resetCursor();
                         cursorTimer.stop();
                         break;
+
                     default:
                         break;
                 }
             }
+        }
 
+        // Actually VideoOutput
+        VideoItem {
+            id: videoOutput;
+            anchors.fill: parent;
             rotation: 180;
-            inputManager: root.inputManager;
-
             MouseArea {
                 anchors.fill: parent;
                 onDoubleClicked: {
@@ -135,12 +178,15 @@ Rectangle {
                 }
             }
         }
+
     }
 
     GameActionBar {
         id: gameActionBar;
         anchors { bottom: parent.bottom; left: parent.left; right: parent.right; }
     }
+
+    // Mouse stuff
 
     // Use the main mouse area to monitor the mouse for movement
     Connections {

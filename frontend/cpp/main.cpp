@@ -11,7 +11,11 @@
 #include "phxpaths.h"
 #include "platformsmodel.h"
 #include "libretrodatabase.h"
-#include "videoitem.h"
+// #include "videoitem.h"
+#include "videooutput.h"
+#include "corecontrol.h"
+#include "core.h"
+#include "libretrocore.h"
 
 // This is used to get the stack trace behind whatever debug message you want to diagnose
 // Simply change the message string below to whatever you want (partial string matching), set the breakpoint
@@ -158,7 +162,14 @@ int main( int argc, char *argv[] ) {
     QObject::connect( &engine, &QQmlApplicationEngine::quit, &app, &QGuiApplication::quit );
 
     // Register our custom types for use within QML
-    VideoItem::registerTypes();
+    // VideoItem::registerTypes();
+    qmlRegisterType<VideoOutput>( "vg.phoenix.backend", 1, 0, "VideoItem" );
+    qmlRegisterType<CoreControl>( "vg.phoenix.backend", 1, 0, "CoreControl" );
+    qmlRegisterUncreatableType<Core>( "vg.phoenix.backend", 1, 0, "Core", "Core or its subclasses cannot be instantiated from QML." );
+    qRegisterMetaType<Core::State>();
+    qRegisterMetaType<QStringMap>();
+    qRegisterMetaType<ProducerFormat>();
+    qRegisterMetaType<size_t>( "size_t" );
     InputManager::registerTypes();
 
     // Register our custom QML-accessable/instantiable objects

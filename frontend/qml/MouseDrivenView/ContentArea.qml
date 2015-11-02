@@ -232,7 +232,7 @@ Rectangle {
         id: contentAreaStackView;
         initialItem: boxArtGridComponent;
         anchors.fill: parent;
-        anchors.bottomMargin: root.gameViewObject.videoItem.coreState === Core.STATEPAUSED ? gameSuspendedArea.height : 0;
+        anchors.bottomMargin: root.gameViewObject.videoItem.state === Core.PAUSED ? gameSuspendedArea.height : 0;
 
         delegate: StackViewDelegate {
             function transitionFinished( properties ) { properties.exitItem.opacity = 1; }
@@ -279,9 +279,10 @@ Rectangle {
         LibrarySettingsView { objectName: "LibrarySettingsView"; }
 
     }
+
     GameSuspendedArea {
         id: gameSuspendedArea;
         objectName: "GameSuspendedArea";
-        visible: root.gameViewObject.videoItem.coreState === Core.STATEPAUSED;
+        visible: root.gameViewObject.videoItem.state === Core.PAUSED;
     }
 }

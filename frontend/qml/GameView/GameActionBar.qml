@@ -24,7 +24,7 @@ Rectangle {
     }
 
     // gameActionBar visible only when paused or mouse recently moved and only while not transitioning
-    opacity: ( ( ( gameView.coreState === Core.STATEPAUSED ) || ( cursorTimer.running ) )  && ( !layoutStackView.transitioning ) ) ? 1.0 : 0.0;
+    opacity: ( ( ( gameView.coreState === Core.PAUSED ) || ( cursorTimer.running ) )  && ( !layoutStackView.transitioning ) ) ? 1.0 : 0.0;
 
     Behavior on opacity { PropertyAnimation { duration: 250; } }
 
@@ -67,14 +67,14 @@ Rectangle {
                     anchors.margins: 10;
                     width: parent.width;
                     sourceSize { height: height; width: width; }
-                    source: videoItem.running ? qsTr( "pause.svg" ) : qsTr( "play.svg" );
+                    source: gameView.running ? qsTr( "pause.svg" ) : qsTr( "play.svg" );
                 }
 
                 MouseArea {
                     anchors.fill: parent;
                     onClicked: {
-                        if (videoItem.running) { videoItem.slotPause(); }
-                        else { videoItem.slotResume(); }
+                        if( gameView.running ) { videoItem.pause(); }
+                        else { videoItem.play(); }
                     }
                 }
             }
@@ -130,7 +130,7 @@ Rectangle {
                     stepSize: 0.01;
                     activeFocusOnPress: true;
                     tickmarksEnabled: false;
-                    onValueChanged: { videoItem.signalSetVolume(value); }
+                    onValueChanged: { videoItem.volume = value; }
 
                     style: SliderStyle {
                         handle: Item {
@@ -211,7 +211,7 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent;
                     onClicked: {
-                        videoItem.slotPause();
+                        videoItem.pause();
                         root.disableMouseClicks();
                         rootMouseArea.hoverEnabled = false;
                         resetCursor();
@@ -238,7 +238,7 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent;
                     onClicked: {
-                        videoItem.slotStop();
+                        videoItem.stop();
                         root.disableMouseClicks();
                         rootMouseArea.hoverEnabled = false;
                         resetCursor();
