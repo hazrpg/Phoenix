@@ -135,7 +135,7 @@ Rectangle {
                 hoverEnabled: true;
                 onEntered: { rootMouseArea.cursorShape = Qt.PointingHandCursor; }
                 onExited: { rootMouseArea.cursorShape = Qt.ArrowCursor; }
-                onClicked: { root.gameViewObject.videoItem.stop(); }
+                onClicked: { root.resetTitle(); root.gameViewObject.videoItem.stop(); }
             }
         }
     }
