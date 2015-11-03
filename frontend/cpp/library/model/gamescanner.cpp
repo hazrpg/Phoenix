@@ -293,7 +293,7 @@ void GameScanner::enqueueFiles( QString &filePath ) {
 
         case GameFileInfo::FileType::BiosFile: {
             auto biosFileInfo = static_cast<BiosFileInfo>( fileInfo );
-            biosFileInfo.cache( PhxPaths::biosLocation() );
+            biosFileInfo.cache( PhxPaths::firmwareLocation() );
             break;
         }
 

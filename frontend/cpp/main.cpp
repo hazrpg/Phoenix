@@ -163,14 +163,16 @@ int main( int argc, char *argv[] ) {
 
     // Register our custom types for use within QML
     // VideoItem::registerTypes();
-    qmlRegisterType<VideoOutput>( "vg.phoenix.backend", 1, 0, "VideoItem" );
+    qmlRegisterType<VideoOutput>( "vg.phoenix.backend", 1, 0, "VideoOutput" );
     qmlRegisterType<CoreControl>( "vg.phoenix.backend", 1, 0, "CoreControl" );
     qmlRegisterUncreatableType<Core>( "vg.phoenix.backend", 1, 0, "Core", "Core or its subclasses cannot be instantiated from QML." );
-    qRegisterMetaType<Core::State>();
+    InputManager::registerTypes();
+
+    // Needed for connecting signals/slots
+    qRegisterMetaType<Core::State>( "Core::State" );
+    qRegisterMetaType<size_t>( "size_t" );
     qRegisterMetaType<QStringMap>();
     qRegisterMetaType<ProducerFormat>();
-    qRegisterMetaType<size_t>( "size_t" );
-    InputManager::registerTypes();
 
     // Register our custom QML-accessable/instantiable objects
     qmlRegisterType<Library::PlatformsModel>( "vg.phoenix.models", 1, 0, "PlatformsModel" );

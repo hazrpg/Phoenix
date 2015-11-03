@@ -106,7 +106,7 @@ Rectangle {
                     layoutStackView.pop();
 
                     // Resume game
-                    root.gameView.videoItem.play();
+                    root.gameViewObject.videoItem.play();
                 }
                 onEntered: { rootMouseArea.cursorShape = Qt.PointingHandCursor; }
                 onExited: { rootMouseArea.cursorShape = Qt.ArrowCursor; }

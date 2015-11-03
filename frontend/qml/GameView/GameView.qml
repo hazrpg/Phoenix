@@ -38,7 +38,7 @@ Rectangle {
             dict[ "type" ] = "libretro";
             dict[ "core" ] = gameView.coreGamePair[ "corePath" ];
             dict[ "game" ] = gameView.coreGamePair[ "gamePath" ];
-            dict[ "systemPath" ] = PhxPaths.qmlBiosLocation();
+            dict[ "systemPath" ] = PhxPaths.qmlFirmwareLocation();
             dict[ "savePath" ] = PhxPaths.qmlSaveLocation();
 
             videoItem.source = dict;
@@ -91,12 +91,22 @@ Rectangle {
         radius: 64;
     }
 
-    // VideoItem serves simultaneously as a video output QML item (consumer) and as a "controller" for the
-    // underlying emulation
     Rectangle {
         id: videoItemContainer;
-        anchors { top: parent.top; bottom: parent.bottom; horizontalCenter: parent.horizontalCenter; }
-        width: height * videoOutput.aspectRatio;
+        anchors.centerIn: parent;
+
+        // TODO: This sets up a "fit" strategy. If the user wants we should also have a
+        // "stretch" (width/height = parent.width/height), "fill" (use aspectWidth/Height)
+        // and "center" (have VideoOutput export nativeHeight/Width and clamp if larger than this container) strategy
+        property int aspectWidth: parent.height * videoOutput.aspectRatio;
+        property int aspectHeight: videoOutput.aspectRatio < 1.0 ? parent.height : parent.width / videoOutput.aspectRatio;
+
+        property int fitModeWidth: aspectWidth > parent.width ? parent.width : aspectWidth;
+        property int fitModeHeight: aspectHeight > parent.height ? parent.height : aspectHeight;
+
+        width: fitModeWidth;
+        height: fitModeHeight;
+
         color: "black";
         opacity: 0.0;
 
@@ -110,6 +120,7 @@ Rectangle {
             }
 
             // Use this to automatically play once loaded
+            property bool autoPlay: true;
             property bool firstLaunch: true;
 
             onStateChanged: {
@@ -140,12 +151,14 @@ Rectangle {
 
                     case Core.PAUSED:
                         if( firstLaunch ) {
-                            console.log( "Autoplay activated" );
                             firstLaunch = false;
-                            play();
+                            if( autoPlay ) {
+                                console.log( "Autoplay activated" );
+                                play();
+                            }
                         }
 
-                        videoItemContainer.opacity = 0.0;
+                        videoItemContainer.opacity = 1.0;
                         resetCursor();
                         cursorTimer.stop();
                         break;
@@ -163,8 +176,7 @@ Rectangle {
             }
         }
 
-        // Actually VideoOutput
-        VideoItem {
+        VideoOutput {
             id: videoOutput;
             anchors.fill: parent;
             rotation: 180;
