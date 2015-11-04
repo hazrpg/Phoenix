@@ -91,7 +91,7 @@ Rectangle {
 
             boundsBehavior: Flickable.StopAtBounds;
 
-            Component.onCompleted: { libraryModel.updateCount(); }
+            Component.onCompleted: { libraryModel.updateCount(); libraryModel.sort( 1, Qt.AscendingOrder ); }
 
             delegate: Rectangle {
                 id: gridItem;

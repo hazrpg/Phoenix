@@ -52,23 +52,23 @@ LibraryModel::LibraryModel( UserDatabase &db, QObject *parent )
 
     // Do not change this from a blocking queued connection. This is to simplify the threaded code.
     connect( &mGameScanner, &GameScanner::insertGameData, this, &LibraryModel::handleInsertGame );
-    connect( &mGameScanner, &GameScanner::started, this, [] {
-        qCDebug( phxLibrary ) << "Worker started...";
+    connect( &mGameScanner, &GameScanner::started, this, [ this ] {
+        qCDebug( phxLibrary ) << "Game scanner began matching games against the database";
     } );
 
     // Do some thread cleanup.
     connect( &mGameScanner, &GameScanner::finished, this, [ this ] {
-        qCDebug( phxLibrary ) << "Worker finished...";
+        qCDebug( phxLibrary ) << "Game scanner finished matching games against the database";
     } );
 
     // Listen to the Worker Thread.
     connect( &mGameScannerThread, &QThread::started, &mGameScanner, &GameScanner::eventLoopStarted );
     connect( &mGameScannerThread, &QThread::started, this, [ this ] {
-        qCDebug( phxLibrary ) << "Worker thread started...";
+        qCDebug( phxLibrary ) << "Game scanner thread started...";
     } );
 
     connect( &mGameScannerThread, &QThread::finished, this, [ this ] {
-        qCDebug( phxLibrary ) << "Worker thread stopped...";
+        qCDebug( phxLibrary ) << "Game scanner thread stopped...";
     } );
 
 }
@@ -98,6 +98,10 @@ QVariant LibraryModel::data( const QModelIndex &index, int role ) const {
         int columnIdx = record().indexOf( mRoleNames.value( role ) );
         return QSqlTableModel::data( this->index( index.row(), columnIdx ), Qt::DisplayRole );
     }
+}
+
+void LibraryModel::sort( int column, Qt::SortOrder order ) {
+    QSqlTableModel::sort( column, order );
 }
 
 QHash<int, QByteArray> LibraryModel::roleNames() const {
@@ -207,6 +211,7 @@ void LibraryModel::handleContainsDrag( const bool contains ) {
 }
 
 void LibraryModel::handleDroppedUrls() {
+    qCDebug( phxLibrary ) << "Received a set of files via drag & drop, sending message to scanner to begin scan...";
     emit droppedUrls();
 }
 
