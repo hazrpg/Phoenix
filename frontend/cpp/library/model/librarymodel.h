@@ -87,8 +87,8 @@ namespace Library {
 
             // Filters the SQL model based on a SQL query.
             // This is used to filter games in the BoxartGrid
-            void setFilter( const QString table, const QString row, const QVariant value );
-            void clearFilter( const QString table, const QString row );
+            void setFilter( const QString table, const QString column, const QVariant value );
+            void clearFilter( const QString table, const QString column );
 
             void sync();
 

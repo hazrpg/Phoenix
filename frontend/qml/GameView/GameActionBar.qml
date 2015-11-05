@@ -24,7 +24,7 @@ Rectangle {
     }
 
     // gameActionBar visible only when paused or mouse recently moved and only while not transitioning
-    opacity: ( ( ( gameView.coreState === Core.PAUSED ) || ( cursorTimer.running ) )  && ( !layoutStackView.transitioning ) ) ? 1.0 : 0.0;
+    opacity: ( ( ( gameView.coreState === Control.PAUSED ) || ( cursorTimer.running ) )  && ( !layoutStackView.transitioning ) ) ? 1.0 : 0.0;
 
     Behavior on opacity { PropertyAnimation { duration: 250; } }
 
@@ -73,8 +73,8 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent;
                     onClicked: {
-                        if( gameView.running ) { videoItem.pause(); }
-                        else { videoItem.play(); }
+                        if( gameView.running ) { coreControl.pause(); }
+                        else { coreControl.play(); }
                     }
                 }
             }
@@ -130,7 +130,7 @@ Rectangle {
                     stepSize: 0.01;
                     activeFocusOnPress: true;
                     tickmarksEnabled: false;
-                    onValueChanged: { videoItem.volume = value; }
+                    onValueChanged: { coreControl.volume = value; }
 
                     style: SliderStyle {
                         handle: Item {
@@ -211,7 +211,7 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent;
                     onClicked: {
-                        videoItem.pause();
+                        coreControl.pause();
                         root.disableMouseClicks();
                         rootMouseArea.hoverEnabled = false;
                         resetCursor();
@@ -238,7 +238,7 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent;
                     onClicked: {
-                        videoItem.stop();
+                        coreControl.stop();
                         root.resetTitle();
                         root.disableMouseClicks();
                         rootMouseArea.hoverEnabled = false;

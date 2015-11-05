@@ -15,10 +15,10 @@ Rectangle {
     color: PhxTheme.common.gameViewBackgroundColor;
 
     // Automatically set by VideoItem, true if a game is loaded and unpaused
-    property bool running: videoItem.state === Core.PLAYING;
-    property alias coreState: videoItem.state;
-    // property alias loadedGame: videoItem.source["game"];
-    property alias videoItem: videoItem;
+    property bool running: coreControl.state === Control.PLAYING;
+    property alias coreState: coreControl.state;
+    // property alias loadedGame: coreControl.source["game"];
+    property alias coreControl: coreControl;
     property alias videoOutput: videoOutput;
 
     // A small workaround to guarantee that the core and game are loaded in the correct order
@@ -41,16 +41,16 @@ Rectangle {
             dict[ "systemPath" ] = PhxPaths.qmlFirmwareLocation();
             dict[ "savePath" ] = PhxPaths.qmlSaveLocation();
 
-            videoItem.source = dict;
+            coreControl.source = dict;
         }
 
     }
 
     // Call load() once the new source info makes its way to the Core, which lives in another thread
     Connections {
-        target: videoItem;
+        target: coreControl;
         onSourceChanged: {
-            videoItem.load();
+            coreControl.load();
         }
     }
 
@@ -64,7 +64,7 @@ Rectangle {
         source: "phoenix.png";
         sourceSize { height: height; width: width; }
         opacity: 0.25;
-        enabled: videoItemContainer.opacity === 1.0 ? false : true;
+        enabled: coreControlContainer.opacity === 1.0 ? false : true;
     }
 
     // Glow effect for the logo
@@ -75,7 +75,7 @@ Rectangle {
         color: "#d55b4a";
         radius: 8.0;
         samples: 16;
-        enabled: videoItemContainer.opacity === 1.0 ? false : true;
+        enabled: coreControlContainer.opacity === 1.0 ? false : true;
         SequentialAnimation on radius {
             loops: Animation.Infinite;
             PropertyAnimation { to: 16; duration: 2000; easing.type: Easing.InOutQuart; }
@@ -87,12 +87,12 @@ Rectangle {
     FastBlur {
         id: blurEffect;
         anchors.fill: parent;
-        source: videoItemContainer;
+        source: coreControlContainer;
         radius: 64;
     }
 
     Rectangle {
-        id: videoItemContainer;
+        id: coreControlContainer;
         anchors.centerIn: parent;
 
         // TODO: This sets up a "fit" strategy. If the user wants we should also have a
@@ -113,7 +113,7 @@ Rectangle {
         Behavior on opacity { NumberAnimation { duration: 250; } }
 
         CoreControl {
-            id: videoItem;
+            id: coreControl;
             Component.onCompleted: {
                 this.videoOutput = videoOutput;
                 this.inputManager = root.inputManager;
@@ -125,31 +125,31 @@ Rectangle {
 
             onStateChanged: {
                 switch( state ) {
-                    case Core.STOPPED:
-                        videoItemContainer.opacity = 0.0;
+                    case Control.STOPPED:
+                        coreControlContainer.opacity = 0.0;
                         resetCursor();
                         cursorTimer.stop();
                         break;
 
-                    case Core.LOADING:
-                        videoItemContainer.opacity = 0.0;
+                    case Control.LOADING:
+                        coreControlContainer.opacity = 0.0;
                         resetCursor();
                         cursorTimer.stop();
                         break;
 
-                    case Core.PLAYING:
+                    case Control.PLAYING:
                         rootMouseArea.cursorShape = Qt.BlankCursor;
 
                         // Show the game content
-                        videoItemContainer.opacity = 1.0;
+                        coreControlContainer.opacity = 1.0;
 
                         // Let the window be resized even smaller than the default minimum size according to the aspect ratio
-                        root.minimumWidth = Math.min( root.defaultMinWidth, root.defaultMinWidth / videoOutput.aspectRatio / 2);
-                        root.minimumHeight = Math.min( root.defaultMinHeight, root.defaultMinHeight / videoOutput.aspectRatio / 2);
+                        root.minimumWidth = Math.min( root.defaultMinWidth, root.defaultMinWidth / videoOutput.aspectRatio / 2 );
+                        root.minimumHeight = Math.min( root.defaultMinHeight, root.defaultMinHeight / videoOutput.aspectRatio / 2 );
 
                         break;
 
-                    case Core.PAUSED:
+                    case Control.PAUSED:
                         if( firstLaunch ) {
                             firstLaunch = false;
                             if( autoPlay ) {
@@ -158,14 +158,14 @@ Rectangle {
                             }
                         }
 
-                        videoItemContainer.opacity = 1.0;
+                        coreControlContainer.opacity = 1.0;
                         resetCursor();
                         cursorTimer.stop();
                         break;
 
-                    case Core.UNLOADING:
+                    case Control.UNLOADING:
                         firstLaunch = true;
-                        videoItemContainer.opacity = 0.0;
+                        coreControlContainer.opacity = 0.0;
                         resetCursor();
                         cursorTimer.stop();
                         break;

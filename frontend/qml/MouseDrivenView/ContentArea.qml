@@ -53,7 +53,7 @@ Rectangle {
                     interval: 300;
                     running: false;
                     repeat: false;
-                    onTriggered: { libraryModel.setFilter( "games", "title", '%' + searchBar.text + '%' ); }
+                    onTriggered: { libraryModel.setFilter( "games", "title", "%" + searchBar.text + "%" ); }
                 }
                 onTextChanged: searchTimer.restart();
             }
@@ -232,7 +232,7 @@ Rectangle {
         id: contentAreaStackView;
         initialItem: boxArtGridComponent;
         anchors.fill: parent;
-        anchors.bottomMargin: root.gameViewObject.videoItem.state === Core.PAUSED ? gameSuspendedArea.height : 0;
+        anchors.bottomMargin: root.gameViewObject.coreControl.state === Control.PAUSED ? gameSuspendedArea.height : 0;
 
         delegate: StackViewDelegate {
             function transitionFinished( properties ) { properties.exitItem.opacity = 1; }
@@ -283,6 +283,6 @@ Rectangle {
     GameSuspendedArea {
         id: gameSuspendedArea;
         objectName: "GameSuspendedArea";
-        visible: root.gameViewObject.videoItem.state === Core.PAUSED;
+        visible: root.gameViewObject.coreControl.state === Control.PAUSED;
     }
 }

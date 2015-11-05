@@ -171,19 +171,19 @@ void LibraryModel::updateCount() {
     emit countChanged();
 }
 
-void LibraryModel::setFilter( const QString table, const QString row, const QVariant value ) {
+void LibraryModel::setFilter( const QString table, const QString column, const QVariant value ) {
 
-    auto tableRow = table + QStringLiteral( "." ) + row;
+    auto tableColumn = table + QStringLiteral( "." ) + column;
 
-    filterParameterMap.insert( tableRow, value.toString() );
+    filterParameterMap.insert( tableColumn, value.toString() );
 
     QSqlTableModel::setFilter( createFilter() );
 }
 
-void LibraryModel::clearFilter( const QString table, const QString row ) {
-    auto tableRow = table + QStringLiteral( "." ) + row;
+void LibraryModel::clearFilter( const QString table, const QString column ) {
+    auto tableColumn = table + QStringLiteral( "." ) + column;
 
-    if( filterParameterMap.remove( tableRow ) == 0 ) {
+    if( filterParameterMap.remove( tableColumn ) == 0 ) {
         return;
     }
 
@@ -294,24 +294,24 @@ void LibraryModel::handleUpdateGame( const GameData metaData ) {
 
 QString LibraryModel::selectStatement() const {
     static const auto collectionFilterStatement = QStringLiteral( "SELECT " )
-            + UserDatabase::tableName
-            + QStringLiteral( ".* FROM " )
-            + UserDatabase::tableName
-            + QStringLiteral( " INNER JOIN " )
-            + UserDatabase::tableCollectionMappings
-            + QStringLiteral( " ON " )
-            + UserDatabase::tableName
-            + QStringLiteral( ".rowIndex = " )
-            + UserDatabase::tableCollectionMappings
-            + QStringLiteral( ".rowIndex JOIN " )
-            + UserDatabase::tableCollections
-            + QStringLiteral( " ON " )
-            + UserDatabase::tableCollections
-            + QStringLiteral( ".collectionID = " )
-            + UserDatabase::tableCollectionMappings
-            + QStringLiteral( ".collectionID" );
+            % UserDatabase::tableName
+            % QStringLiteral( ".* FROM " )
+            % UserDatabase::tableName
+            % QStringLiteral( " INNER JOIN " )
+            % UserDatabase::tableCollectionMappings
+            % QStringLiteral( " ON " )
+            % UserDatabase::tableName
+            % QStringLiteral( ".rowIndex = " )
+            % UserDatabase::tableCollectionMappings
+            % QStringLiteral( ".rowIndex JOIN " )
+            % UserDatabase::tableCollections
+            % QStringLiteral( " ON " )
+            % UserDatabase::tableCollections
+            % QStringLiteral( ".collectionID = " )
+            % UserDatabase::tableCollectionMappings
+            % QStringLiteral( ".collectionID" );
 
-    auto select = collectionFilterStatement + " WHERE " + filter();
+    auto select = collectionFilterStatement % " WHERE " % filter();
 
     if( !mFilterCollection ) {
         return QSqlTableModel::selectStatement();
@@ -406,10 +406,10 @@ QString LibraryModel::createFilter() {
         mFilterCollection = key.contains( QStringLiteral( "collections" ) );
         QString comparison;
 
-        if( key == UserDatabase::tableName + QStringLiteral( ".title" ) ) {
+        if( key == UserDatabase::tableName % QStringLiteral( ".title" ) ) {
             comparison = QStringLiteral( "LIKE ?" );
-        } else if( key == UserDatabase::tableCollections + QStringLiteral( ".collectionID" )
-                   || key == UserDatabase::tableName + QStringLiteral( ".system" ) ) {
+        } else if( key == UserDatabase::tableCollections % QStringLiteral( ".collectionID" )
+                   || key == UserDatabase::tableName % QStringLiteral( ".system" ) ) {
             comparison = QStringLiteral( "= ?" );
         }
 
