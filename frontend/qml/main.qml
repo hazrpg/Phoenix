@@ -15,7 +15,7 @@ ApplicationWindow {
     visibility: Window.Windowed;
     width: Screen.width * 0.7;
     height: Screen.height * 0.7;
-    title: qsTr("Phoenix");
+    //title: qsTr("Phoenix");
     color: "black";
 
     property int defaultMinHeight: 600;

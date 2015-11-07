@@ -47,7 +47,7 @@ Rectangle {
                 anchors { left: parent.left; leftMargin: 64; verticalCenter: parent.verticalCenter; }
                 horizontalAlignment: Text.AlignLeft;
                 width: PhxTheme.common.menuWidth - 72;
-                text: root.gameViewObject.coreGamePair[ "title" ];
+                text: root.gameViewObject.title;
                 fontSize: PhxTheme.common.baseFontSize + 1;
                 color: PhxTheme.common.baseBackgroundColor;
                 spacing: 40;

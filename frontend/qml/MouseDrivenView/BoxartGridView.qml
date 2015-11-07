@@ -7,6 +7,7 @@ import QtGraphicalEffects 1.0
 import vg.phoenix.cache 1.0
 import vg.phoenix.backend 1.0
 import vg.phoenix.themes 1.0
+import vg.phoenix.paths 1.0
 
 Rectangle {
     id: boxartGridBackground;
@@ -129,13 +130,26 @@ Rectangle {
                             // Call this callback once the coreGamePair below makes its way to the Core
                             root.gameViewObject.coreControl.sourceChanged.connect( sourceChangedCallback );
 
-                            // Do the assignment that will send source information to Core
-                            root.gameViewObject.coreGamePair = { "corePath": core
-                                                               , "gamePath": game
-                                                               , "title": title };
-
                             // Set window title to game title
-                            root.title = title + " -- LOADING...";
+                            root.title = "Loading - " + title;
+                            console.log( title );
+                            console.log( root.title );
+
+                            // Set up the packet of information to pass to CoreControl
+                            var dict = {};
+                            dict[ "type" ] = "libretro";
+                            dict[ "core" ] = core;
+                            dict[ "game" ] = game;
+                            dict[ "systemPath" ] = PhxPaths.qmlFirmwareLocation();
+                            dict[ "savePath" ] = PhxPaths.qmlSaveLocation();
+
+                            // Extra stuff
+                            dict[ "title" ] = title;
+
+                            // Assign the source
+                            // Execution will continue in sourceChangedCallback() once CoreControl gets this assignment
+                            root.gameViewObject.coreControl.source = dict;
+
 
                         }
 
@@ -143,7 +157,7 @@ Rectangle {
 
                     // Once the source has been properly set in the Core, begin the load
                     function sourceChangedCallback() {
-                        // console.log( "sourceChangedCallback()" );
+                        console.log( "sourceChangedCallback()" );
 
                         // Disconnect this callback once it's been used
                         root.gameViewObject.coreControl.sourceChanged.disconnect( sourceChangedCallback );
@@ -152,11 +166,13 @@ Rectangle {
                         root.gameViewObject.coreControl.stateChanged.connect( stateChangedCallback );
 
                         // Begin the load
+                        // Execution will continue in stateChangedCallback() once CoreControl changes state
                         root.gameViewObject.coreControl.load();
                     }
+
                     // Once the load completes, launch the game
                     function stateChangedCallback( newState ) {
-                        // console.log( "stateChangedCallback(" + newState + ")" );
+                        console.log( "stateChangedCallback(" + newState + ")" );
 
                         if( newState === Control.LOADING ) {
                             // Nothing to do when we go from setting source to loading core/game
@@ -164,9 +180,6 @@ Rectangle {
                         if( newState === Control.PAUSED ) {
                             // Disconnect this callback once it's been used where we want it to be used
                             root.gameViewObject.coreControl.stateChanged.disconnect( stateChangedCallback );
-
-                            console.log( root.title + title );
-                            root.title = title;
 
                             root.gameViewObject.coreControl.play();
 

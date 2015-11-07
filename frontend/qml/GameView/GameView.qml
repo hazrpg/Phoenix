@@ -20,38 +20,7 @@ Rectangle {
     // property alias loadedGame: coreControl.source["game"];
     property alias coreControl: coreControl;
     property alias videoOutput: videoOutput;
-
-    // A small workaround to guarantee that the core and game are loaded in the correct order
-    property var coreGamePair: {
-        "corePath": ""
-        , "gamePath": ""
-        , "title": ""
-    };
-
-    onCoreGamePairChanged: {
-
-        if ( coreGamePair[ "corePath" ] !== "" ) {
-            console.log( "Attempting to load core: " + gameView.coreGamePair[ "corePath" ] );
-            console.log( "Attempting to load game: " + gameView.coreGamePair[ "gamePath" ] );
-
-            var dict = {};
-            dict[ "type" ] = "libretro";
-            dict[ "core" ] = gameView.coreGamePair[ "corePath" ];
-            dict[ "game" ] = gameView.coreGamePair[ "gamePath" ];
-            dict[ "systemPath" ] = PhxPaths.qmlFirmwareLocation();
-            dict[ "savePath" ] = PhxPaths.qmlSaveLocation();
-
-            coreControl.source = dict;
-        }
-
-    }
-
-    // Call load() once the new source info makes its way to the Core, which lives in another thread
-    Connections {
-        target: coreControl;
-        onSourceChanged: {
-        }
-    }
+    property string title: "";
 
     // A logo
     // Only visible when a game is not running
@@ -118,11 +87,15 @@ Rectangle {
                 this.inputManager = root.inputManager;
             }
 
-            vsync: false;
+            vsync: true;
 
             // Use this to automatically play once loaded
             property bool autoPlay: false;
             property bool firstLaunch: true;
+
+            onSourceChanged: {
+                title = source[ "title" ];
+            }
 
             onStateChanged: {
                 switch( state ) {
@@ -139,6 +112,8 @@ Rectangle {
                         break;
 
                     case Control.PLAYING:
+                        root.title = title;
+
                         rootMouseArea.cursorShape = Qt.BlankCursor;
 
                         // Show the game content
@@ -151,6 +126,7 @@ Rectangle {
                         break;
 
                     case Control.PAUSED:
+                        root.title = "Paused - " + title;
                         if( firstLaunch ) {
                             firstLaunch = false;
                             if( autoPlay ) {
@@ -165,6 +141,7 @@ Rectangle {
                         break;
 
                     case Control.UNLOADING:
+                        root.title = "Unloading - " + title;
                         firstLaunch = true;
                         coreControlContainer.opacity = 0.0;
                         resetCursor();
