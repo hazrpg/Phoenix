@@ -211,12 +211,27 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent;
                     onClicked: {
+                        console.log( "GameActionBar: Minimize (Pause game)" );
+                        // These callbacks are necessary as the call to pause() is non-blocking, it just sends out a signal
+                        // The callback will execute when it *actually* pauses
+                        coreControl.stateChanged.connect( pausedCallback );
                         coreControl.pause();
-                        root.disableMouseClicks();
-                        rootMouseArea.hoverEnabled = false;
-                        resetCursor();
-                        resetWindowSize();
-                        layoutStackView.push( mouseDrivenView );
+                    }
+                    function pausedCallback( newState ) {
+                        // console.log( "pausedCallback(" + newState + ")" );
+                        if( newState === Control.PAUSED ) {
+
+                            // This callback is meant to be used until the pause goes through.
+                            // Disconnect once it's done
+                            coreControl.stateChanged.disconnect( pausedCallback );
+
+                            root.disableMouseClicks();
+                            rootMouseArea.hoverEnabled = false;
+                            resetCursor();
+                            resetWindowSize();
+                            layoutStackView.push( mouseDrivenView );
+
+                        }
                     }
                 }
             }
@@ -238,14 +253,33 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent;
                     onClicked: {
+                        console.log( "GameActionBar: Close game" );
+
+                        // Do not transition back to the library until we've *fully* shut down (deleted threads)
+                        coreControl.stateChanged.connect( stoppedCallback );
+
                         coreControl.stop();
-                        root.resetTitle();
-                        root.disableMouseClicks();
-                        rootMouseArea.hoverEnabled = false;
-                        resetCursor();
-                        resetWindowSize();
-                        layoutStackView.push( mouseDrivenView );
+
+                        // Let the user know we're thinking!
+                        rootMouseArea.cursorShape = Qt.BusyCursor;
+
                     }
+
+                    function stoppedCallback( newState ) {
+                        console.log( "stoppedCallback(" + newState + ")" );
+                        if( newState === Control.STOPPED ) {
+                            coreControl.stateChanged.disconnect( stoppedCallback );
+
+                            console.log( "Going to library" );
+
+                            resetWindowSize();
+                            root.resetTitle();
+                            root.disableMouseClicks();
+                            rootMouseArea.hoverEnabled = false;
+                            layoutStackView.push( mouseDrivenView );
+                        }
+                    }
+
                 }
             }
             Rectangle { anchors { top: parent.top; bottom: parent.bottom; } color: "transparent"; width: 12; } // DO NOT remove this - Separator

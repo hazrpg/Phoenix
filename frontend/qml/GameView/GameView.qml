@@ -50,7 +50,6 @@ Rectangle {
     Connections {
         target: coreControl;
         onSourceChanged: {
-            coreControl.load();
         }
     }
 
@@ -119,8 +118,10 @@ Rectangle {
                 this.inputManager = root.inputManager;
             }
 
+            vsync: false;
+
             // Use this to automatically play once loaded
-            property bool autoPlay: true;
+            property bool autoPlay: false;
             property bool firstLaunch: true;
 
             onStateChanged: {

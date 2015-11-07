@@ -125,6 +125,8 @@ ApplicationWindow {
 
         delegate: StackViewDelegate {
             function transitionFinished(){
+                console.log( "transitionFinished()" );
+                rootMouseArea.cursorShape = Qt.ArrowCursor;
                 root.enableMouseClicks();
 
                 // Enable hover events iff GameView is the current top of the stack

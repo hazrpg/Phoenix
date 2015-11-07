@@ -16,6 +16,7 @@
 #include "controllable.h"
 #include "producer.h"
 #include "consumer.h"
+#include "corecontrolproxy.h"
 #include "corecontrol.h"
 #include "inputmanager.h"
 #include "core.h"
@@ -174,7 +175,7 @@ int main( int argc, char *argv[] ) {
     // Register our custom types for use within QML
     // VideoItem::registerTypes();
     qmlRegisterType<VideoOutput>( "vg.phoenix.backend", 1, 0, "VideoOutput" );
-    qmlRegisterType<CoreControl>( "vg.phoenix.backend", 1, 0, "CoreControl" );
+    qmlRegisterType<CoreControlProxy>( "vg.phoenix.backend", 1, 0, "CoreControl" );
     qmlRegisterUncreatableType<ControlHelper>( "vg.phoenix.backend", 1, 0, "Control", "Control or its subclasses cannot be instantiated from QML." );
     InputManager::registerTypes();
 
