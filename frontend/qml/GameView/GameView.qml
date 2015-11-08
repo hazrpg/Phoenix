@@ -167,6 +167,10 @@ Rectangle {
                         root.visibility = Window.FullScreen;
                 }
             }
+            linearFiltering: false;
+            television: false;
+            ntsc: true;
+            widescreen: false;
         }
 
     }
