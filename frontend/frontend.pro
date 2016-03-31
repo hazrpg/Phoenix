@@ -1,26 +1,29 @@
 include( deployment.pri )
 
+TARGET = Phoenix
+
+TEMPLATE += app
+
+
+
 ##
 ## Qt settings
 ##
 
-    # Undefine this (for some reason it's on by default on Windows)
-    CONFIG -= debug_and_release debug_and_release_target
-
-    TEMPLATE += app
-
-    QT += qml quick sql multimedia network concurrent
+# Undefine this (for some reason it's on by default on Windows)
+CONFIG -= debug_and_release debug_and_release_target
+CONFIG += c++11
+QT += qml quick sql multimedia network concurrent
 
 ##
 ## Compiler settings
 ##
 
-    CONFIG += c++11
+    OBJECTS_DIR = .obj
+    MOC_DIR     = .moc
+    RCC_DIR     = .rcc
+    UI_DIR      = .gui
 
-    OBJECTS_DIR = obj
-    MOC_DIR     = moc
-    RCC_DIR     = rcc
-    UI_DIR      = gui
 
     # Version info
     win32: {
@@ -63,7 +66,6 @@ include( deployment.pri )
     INCLUDEPATH += ../externals/quazip/quazip
 
     # Include our stuff
-    INCLUDEPATH += ../backend ../backend/consumer ../backend/core ../backend/input ../backend/role ../backend/util
     INCLUDEPATH += cpp cpp/library cpp/library/database cpp/library/fileinfo cpp/library/model cpp/library/scanner cpp/theme
 
     SOURCES += cpp/main.cpp \
@@ -90,7 +92,9 @@ include( deployment.pri )
     cpp/library/scanner/filterfunctor.cpp \
     cpp/library/model/libretromodel.cpp \
     cpp/library/scanner/scannerutil.cpp \
-    cpp/library/scanner/librarytypes.cpp
+    cpp/library/scanner/librarytypes.cpp \
+    cpp/cmdlineargs.cpp \
+    cpp/logging.cpp
 
     HEADERS += cpp/library/gamelauncher.h \
                cpp/library/imagecacher.h \
@@ -116,7 +120,9 @@ include( deployment.pri )
     cpp/library/scanner/reducefunctor.h \
     cpp/library/scanner/filterfunctor.h \
     cpp/library/model/libretromodel.h \
-    cpp/library/scanner/scannerutil.h
+    cpp/library/scanner/scannerutil.h \
+    cpp/cmdlineargs.h \
+    cpp/logging.h
 
     PRECOMPILED_HEADER = cpp/frontendcommon.h
 
@@ -138,9 +144,6 @@ include( deployment.pri )
     # Externals
     LIBS += -L../externals/quazip/quazip
 
-    # Our stuff
-    LIBS += -L../backend
-
     # SDL2
     macx: LIBS += -L/usr/local/lib -L/opt/local/lib # Homebrew, MacPorts
 
@@ -151,8 +154,6 @@ include( deployment.pri )
     # Externals
     LIBS += -lquazip
 
-    # Our stuff
-    LIBS += -lphoenix-backend
 
     # SDL 2
     win32: LIBS += -lmingw32 -lSDL2main

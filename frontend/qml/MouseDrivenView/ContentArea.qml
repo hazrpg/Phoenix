@@ -7,7 +7,7 @@ import QtGraphicalEffects 1.0
 
 import vg.phoenix.models 1.0
 import vg.phoenix.themes 1.0
-import vg.phoenix.backend 1.0
+import Phoenix.Backend 1.0
 
 Rectangle {
     id: contentArea;

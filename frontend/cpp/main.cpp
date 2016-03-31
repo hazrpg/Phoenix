@@ -13,22 +13,11 @@
 #include "librarytypes.h"
 
 // Backend
-#include "control.h"
-#include "controllable.h"
-#include "producer.h"
-#include "consumer.h"
-#include "corecontrolproxy.h"
-#include "corecontrol.h"
-#include "inputmanager.h"
-#include "core.h"
-#include "libretrocore.h"
-#include "videooutput.h"
 #include "cmdlineargs.h"
 
 // Misc
 #include "logging.h"
 #include "phxpaths.h"
-#include "controlhelper.h"
 
 using namespace Library;
 
@@ -138,9 +127,6 @@ int main( int argc, char *argv[] ) {
 
     CmdLineArgs::checkArgs( argc, argv );
 
-    // Init controller db file for backend
-    Q_INIT_RESOURCE( controllerdb );
-
     // Uncomment this to enable the message handler for debugging and stack tracing
     // qInstallMessageHandler( phoenixDebugMessageHandler );
 
@@ -151,6 +137,7 @@ int main( int argc, char *argv[] ) {
 
     // The engine that runs our QML-based UI
     QQmlApplicationEngine engine;
+    engine.addImportPath( app.applicationDirPath() + QStringLiteral( "/plugins" ) );
 
     // Set application metadata
     QGuiApplication::setApplicationDisplayName( QStringLiteral( "Phoenix" ) );
@@ -185,17 +172,6 @@ int main( int argc, char *argv[] ) {
     // Register our custom types for use within QML
     // VideoItem::registerTypes();
     qmlRegisterType<CmdLineArgs>( "vg.phoenix.backend", 1, 0, "CmdLineArgs" );
-    qmlRegisterType<VideoOutput>( "vg.phoenix.backend", 1, 0, "VideoOutput" );
-    qmlRegisterType<CoreControlProxy>( "vg.phoenix.backend", 1, 0, "CoreControl" );
-    qmlRegisterUncreatableType<ControlHelper>( "vg.phoenix.backend", 1, 0, "Control", "Control or its subclasses cannot be instantiated from QML." );
-    InputManager::registerTypes();
-
-    // Needed for connecting signals/slots
-    qRegisterMetaType<Control::State>( "Control::State" );
-    qRegisterMetaType<ControlHelper::State>( "ControlHelper::State" );
-    qRegisterMetaType<size_t>( "size_t" );
-    qRegisterMetaType<QStringMap>();
-    qRegisterMetaType<ProducerFormat>();
 
     qRegisterMetaType<Library::FileEntry>( "FileEntry" );
 

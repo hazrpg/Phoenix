@@ -9,6 +9,8 @@ import vg.phoenix.themes 1.0
 import vg.phoenix.launcher 1.0
 import vg.phoenix.paths 1.0
 
+import Phoenix.Backend 1.0
+
 ApplicationWindow {
     id: root;
     visible: true;

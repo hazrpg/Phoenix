@@ -3,9 +3,10 @@ import QtQuick.Controls 1.4
 import QtGraphicalEffects 1.0
 import QtQuick.Window 2.0
 
-import vg.phoenix.backend 1.0
 import vg.phoenix.themes 1.0
 import vg.phoenix.paths 1.0
+
+import Phoenix.Backend 1.0
 
 // Without deleting this component after every play session, we run the risk of a memory link from the core pointer not being cleared properly.
 // This issue needs to be fixed.

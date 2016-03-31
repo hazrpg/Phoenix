@@ -3,9 +3,12 @@ TEMPLATE = subdirs
 # Externals
 SUBDIRS += externals/quazip/quazip
 
+DEFINES += COPY_NO_INSTALL
+
 # Our stuff
-SUBDIRS += backend
 SUBDIRS += frontend
+SUBDIRS += backend
+
 
 # We'll always be 64-bit
 CONFIG += x86_64
