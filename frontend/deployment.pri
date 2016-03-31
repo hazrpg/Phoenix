@@ -153,24 +153,26 @@ ________________________________________________________________________________
 
 CONFIG(debug, debug|release) {
     unix:backend_file=libbackend.so
-    macx:backend_file=backendd.dynlib
+    macx:backend_file=libbackend_debug.dylib
     win32:backend_file=backendd.dll
 }
 
 CONFIG(release, debug|release) {
     unix:backend_file=libbackend.so
-    macx:backend_file=backend.dynlib
+    macx:backend_file=backend.dylib
     win32:backend_file=backend.dll
 }
 
     plugin_dir = $$TARGET_PATH/plugins/Phoenix/Backend
 
     copy_backend.target += $$plugin_dir/$$backend_file
-    copy_backend.depends += $$clean_path($${TARGET_PATH}/../backend/$$backend_file)
+    macx: copy_backend.depends += $$clean_path($${TARGET_PATH}/../../../../backend/$$backend_file)
+    !macx: copy_backend.depends += $$clean_path($${TARGET_PATH}/../backend/$$backend_file)
     copy_backend.commands += $(MKDIR) $$plugin_dir; $(COPY_FILE) \"$$copy_backend.depends\" \"$$copy_backend.target\"
 
     copy_qmldir.target += $$plugin_dir/qmldir
-    copy_qmldir.depends += $$clean_path($${TARGET_PATH}/../backend/qmldir)
+    macx: copy_qmldir.depends += $$clean_path($${TARGET_PATH}/../../../../backend/qmldir)
+    !macx: copy_qmldir.depends += $$clean_path($${TARGET_PATH}/../backend/qmldir)
     copy_qmldir.commands += $(COPY_FILE) \"$$copy_qmldir.depends\" \"$$copy_qmldir.target\"
 
    QMAKE_EXTRA_TARGETS += copy_backend copy_qmldir
