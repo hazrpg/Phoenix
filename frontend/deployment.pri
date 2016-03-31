@@ -152,11 +152,15 @@ ________________________________________________________________________________
 __________________________________________________________________________________________________________________________________
 
 CONFIG(debug, debug|release) {
-    backend_file=backendd.dll
+    unix:backend_file=libbackend.so
+    macx:backend_file=backendd.dynlib
+    win32:backend_file=backendd.dll
 }
 
 CONFIG(release, debug|release) {
-    backend_file=backend.dll
+    unix:backend_file=libbackend.so
+    macx:backend_file=backend.dynlib
+    win32:backend_file=backend.dll
 }
 
     plugin_dir = $$TARGET_PATH/plugins/Phoenix/Backend
