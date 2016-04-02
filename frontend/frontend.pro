@@ -1,29 +1,25 @@
 include( deployment.pri )
+_______________________________________________________________
+###############
+# Qt Settings #
+###############
 
-TARGET = Phoenix
+    # Undefine this (for some reason it's on by default on Windows)
+    CONFIG -= debug_and_release debug_and_release_target
 
-TEMPLATE += app
+    CONFIG += c++11
+    QT += qml quick sql multimedia network concurrent
+____________________________________________________________________
+#####################
+# Compiler Settings #
+#####################
 
-
-
-##
-## Qt settings
-##
-
-# Undefine this (for some reason it's on by default on Windows)
-CONFIG -= debug_and_release debug_and_release_target
-CONFIG += c++11
-QT += qml quick sql multimedia network concurrent
-
-##
-## Compiler settings
-##
+    TEMPLATE += app
 
     OBJECTS_DIR = .obj
     MOC_DIR     = .moc
     RCC_DIR     = .rcc
     UI_DIR      = .gui
-
 
     # Version info
     win32: {
@@ -85,16 +81,16 @@ QT += qml quick sql multimedia network concurrent
                cpp/library/model/platformsmodel.cpp \
                cpp/library/cuefile.cpp \
                cpp/library/fileinfo/archivefile.cpp \
-    cpp/library/betterfuturewatcher.cpp \
-    cpp/library/scanner/gamehasher.cpp \
-    cpp/library/scanner/mapfunctor.cpp \
-    cpp/library/scanner/reducefunctor.cpp \
-    cpp/library/scanner/filterfunctor.cpp \
-    cpp/library/model/libretromodel.cpp \
-    cpp/library/scanner/scannerutil.cpp \
-    cpp/library/scanner/librarytypes.cpp \
-    cpp/cmdlineargs.cpp \
-    cpp/logging.cpp
+               cpp/library/betterfuturewatcher.cpp \
+               cpp/library/scanner/gamehasher.cpp \
+               cpp/library/scanner/mapfunctor.cpp \
+               cpp/library/scanner/reducefunctor.cpp \
+               cpp/library/scanner/filterfunctor.cpp \
+               cpp/library/model/libretromodel.cpp \
+               cpp/library/scanner/scannerutil.cpp \
+               cpp/library/scanner/librarytypes.cpp \
+               cpp/cmdlineargs.cpp \
+               cpp/logging.cpp
 
     HEADERS += cpp/library/gamelauncher.h \
                cpp/library/imagecacher.h \
@@ -113,16 +109,16 @@ QT += qml quick sql multimedia network concurrent
                cpp/theme/phoenixtheme.h \
                cpp/library/cuefile.h \
                cpp/library/fileinfo/archivefile.h \
-    cpp/library/librarytypes.h \
-    cpp/library/betterfuturewatcher.h \
-    cpp/library/scanner/gamehasher.h \
-    cpp/library/scanner/mapfunctor.h \
-    cpp/library/scanner/reducefunctor.h \
-    cpp/library/scanner/filterfunctor.h \
-    cpp/library/model/libretromodel.h \
-    cpp/library/scanner/scannerutil.h \
-    cpp/cmdlineargs.h \
-    cpp/logging.h
+               cpp/library/librarytypes.h \
+               cpp/library/betterfuturewatcher.h \
+               cpp/library/scanner/gamehasher.h \
+               cpp/library/scanner/mapfunctor.h \
+               cpp/library/scanner/reducefunctor.h \
+               cpp/library/scanner/filterfunctor.h \
+               cpp/library/model/libretromodel.h \
+               cpp/library/scanner/scannerutil.h \
+               cpp/cmdlineargs.h \
+               cpp/logging.h
 
     PRECOMPILED_HEADER = cpp/frontendcommon.h
 
@@ -132,32 +128,32 @@ QT += qml quick sql multimedia network concurrent
                  qml/BigPicture/bigpicture.qrc \
                  qml/MouseDrivenView/mousedrivenview.qrc \
                  qml/GameView/gameview.qrc
+____________________________________________________________________
+###################
+# Linker settings #
+###################
 
-##
-## Linker settings
-##
+    #########
+    # Paths #
+    #########
 
-    ##
-    ## Library paths
-    ##
+        # Externals
+        LIBS += -L../externals/quazip/quazip
 
-    # Externals
-    LIBS += -L../externals/quazip/quazip
+        # SDL2
+        macx: LIBS += -L/usr/local/lib -L/opt/local/lib # Homebrew, MacPorts
 
-    # SDL2
-    macx: LIBS += -L/usr/local/lib -L/opt/local/lib # Homebrew, MacPorts
+    #############
+    # Libraries #
+    #############
 
-    ##
-    ## Libraries
-    ##
+        # Externals
+        LIBS += -lquazip
 
-    # Externals
-    LIBS += -lquazip
+        # SDL 2
+        win32: LIBS += -lmingw32 -lSDL2main
+        LIBS += -lSDL2
 
-
-    # SDL 2
-    win32: LIBS += -lmingw32 -lSDL2main
-    LIBS += -lSDL2
-
-    # Other libraries we use
-    LIBS += -lsamplerate -lz
+        #zlib
+        LIBS += -lz
+____________________________________________________________________

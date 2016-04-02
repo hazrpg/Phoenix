@@ -1,17 +1,15 @@
 TEMPLATE = subdirs
+DEFINES += COPY_NO_INSTALL
+
+# We'll always be 64-bit
+CONFIG += x86_64
 
 # Externals
 SUBDIRS += externals/quazip/quazip
 
-DEFINES += COPY_NO_INSTALL
-
 # Our stuff
 SUBDIRS += frontend
 SUBDIRS += backend
-
-
-# We'll always be 64-bit
-CONFIG += x86_64
 
 # Ensure that frontend is built last
 frontend.depends = backend externals/quazip/quazip

@@ -1,83 +1,84 @@
-# Targets
-
-##
-## Phoenix executable (default target)
-##
+###################
+# Executable Info #
+###################
 
     TARGET = Phoenix
 
     # App icon, metadata
     win32: RC_FILE = phoenix.rc
+    macx: ICON = phoenix.icns
+____________________________________________________________________
+##########
+# Common #
+##########
 
-    macx {
-        ICON = phoenix.icns
-    }
+    ################################
+    # Get Source and Target's Path #
+    ################################
 
-##
-## Common
-##
+        # On Windows, the DOS qmake paths must be converted to Unix paths as the GNU coreutils we'll be using expect that
+        # The default prefix is a folder called "Phoenix" at the root of the build folder
+        win32 {
+            SOURCE_PATH = $$PWD
+            TARGET_PATH = $$OUT_PWD
 
-    # Get the source and target's path
-    # On Windows, the DOS qmake paths must be converted to Unix paths as the GNU coreutils we'll be using expect that
-    # The default prefix is a folder called "Phoenix" at the root of the build folder
-    win32 {
-        #SOURCE_PATH = $$system( cygpath -u \"$$PWD\" )
-        #TARGET_PATH = $$system( cygpath -u \"$$OUT_PWD\" )
+            isEmpty( PREFIX ) {
+                PREFIX = $$clean_path($$OUT_PWD/../dist)
+            }
+            else {
+                PREFIX = $$clean_path( $$PREFIX )
+            }
+        }
 
-        SOURCE_PATH = $$PWD
-        TARGET_PATH = $$OUT_PWD
+        # Unix / OSX
+        !win32 {
+            SOURCE_PATH = $$PWD
+            TARGET_PATH = $$OUT_PWD
 
-        isEmpty( PREFIX ) { PREFIX = $$clean_path($$OUT_PWD/../dist) }
-        #else { PREFIX = $$PREFIX }
+            isEmpty( PREFIX ) { PREFIX = $$clean_path( $$OUT_PWD/../dist ) }
 
-        #message( $$PREFIX )
-
-
-        #isEmpty( PREFIX ) { PREFIX = $$system( cygpath -u \"$$OUT_PWD\..\dist\" ) }
-        #else { PREFIX = $$system( cygpath -u \"$$PREFIX\" ) }
-        #PREFIX_WIN = $$system( cygpath -w \"$$PREFIX\" )
-    }
-
-    !win32 {
-        SOURCE_PATH = $$PWD
-        TARGET_PATH = $$OUT_PWD
-
-        isEmpty( PREFIX ) { PREFIX = $$OUT_PWD/../dist }
-
-        # On OS X, write directly to within the .app folder as that's where the executable lives
-        macx: TARGET_APP = "$$sprintf( "%1/%2.app", $$OUT_PWD, $$TARGET )"
-        macx: TARGET_PATH = "$$TARGET_APP/Contents/MacOS"
-        macx: PREFIX_PATH = "$$sprintf( "%1/%2.app", $$PREFIX, $$TARGET )/Contents/MacOS"
-    }
+            # On OS X, write directly to within the .app folder as that's where the executable lives
+            macx: TARGET_APP = "$$sprintf( "%1/%2.app", $$OUT_PWD, $$TARGET )"
+            macx: TARGET_PATH = "$$TARGET_APP/Contents/MacOS"
+            macx: PREFIX_PATH = "$$sprintf( "%1/%2.app", $$PREFIX, $$TARGET )/Contents/MacOS"
+        }
 
     # Force the Phoenix binary to be relinked if the backend code has changed
     TARGETDEPS += ../externals/quazip/quazip/libquazip.a
 
-    # Make sure it gets installed
-    target.path = "$$PREFIX"
-    unix: !macx: target.path = "$$PREFIX/bin"
-    INSTALLS += target
+    #########################
+    # Make Install Commands #
+    #########################
 
-##
-## Make sure that the portable file gets made in the build folder
-##
+        # Make sure it gets installed
+        target.path = "$$PREFIX"
+        unix: !macx: target.path = "$$PREFIX/bin"
+        INSTALLS += target
 
-    PORTABLE_FILENAME = PHOENIX-PORTABLE
+    ########################
+    # Create Portable File #
+    ########################
 
-    # For the default target (...and anything that depends on it)
-    QMAKE_POST_LINK += touch \"$$TARGET_PATH/$$PORTABLE_FILENAME\"
+        # Make sure that the portable file gets made in the build folder
 
-    # Delete it from the prefix if doing a make install
-    portablefile.path = "$$PREFIX"
-    portablefile.extra = rm -f \"$$PREFIX/$$PORTABLE_FILENAME\"
+        PORTABLE_FILENAME = PHOENIX-PORTABLE
 
-    # Make qmake aware that this target exists
-    QMAKE_EXTRA_TARGETS += portablefile
+        # For the default target (...and anything that depends on it)
+        QMAKE_POST_LINK += touch \"$$TARGET_PATH/$$PORTABLE_FILENAME\"
 
-##
-## Portable distribution: Copy just the files needed for a portable build to the given prefix so it can be archived
-## and distributed
-##
+        # Delete it from the prefix if doing a make install
+        portablefile.path = "$$PREFIX"
+        portablefile.extra = rm -f \"$$PREFIX/$$PORTABLE_FILENAME\"
+
+        # Make qmake aware that this target exists
+        QMAKE_EXTRA_TARGETS += portablefile
+____________________________________________________________________
+#########################
+# Portable Distribution #
+#########################
+
+# Copy just the files needed for a portable build to the given
+# prefix so it can be archived and distributed.
 
     portable.depends = first portablefile
 
@@ -102,139 +103,135 @@
                              cp -p -f \"$$TARGET_PATH/metadata/openvgdb.sqlite\" \"$$PREFIX/Metadata/openvgdb.sqlite\" &&\
                              cp -p -f \"$$TARGET_PATH/metadata/libretro.sqlite\" \"$$PREFIX/Metadata/libretro.sqlite\"
     }
+_________________________________________________________________
+######################
+# Copy File Commands #
+######################
 
-##
-## Metadata database targets
-##
+    ########################
+    # Copy openvgdb.sqlite #
+    ########################
 
-    # Ideally these files should come from the build folder, however, qmake will not generate rules for them if they don't
-    # already exist
-#    metadb.depends += "$$PWD/metadata/openvgdb.sqlite" \
-#                      "$$PWD/metadata/libretro.sqlite"
+        copy_metadata_db.target +=   $$TARGET_PATH/metadata/openvgdb.sqlite
+        copy_metadata_db.depends +=  $$PWD/metadata/openvgdb.sqlite
+        copy_metadata_db.commands += $(MKDIR) $$TARGET_PATH/metadata; $(COPY_FILE) \"$$SOURCE_PATH/metadata/openvgdb.sqlite\" \"$$TARGET_PATH/metadata/openvgdb.sqlite\"
 
-    # For the default target (...and anything that depends on it)
-#    metadb.target += $$TARGET_PATH/metadata/openvgdb.sqlite
-#    metadb.target += $$TARGET_PATH/metadata/libretro.sqlite
-#    metadb.commands += $(COPY_FILE) \"$$SOURCE_PATH/metadata/openvgdb.sqlite\" \"$$TARGET_PATH/Metadata/openvgdb.sqlite\"
-#    metadb.commands += $(COPY_FILE) \"$$SOURCE_PATH/metadata/libretro.sqlite\" \"$$TARGET_PATH/Metadata/libretro.sqlite\"
-#    POST_TARGETDEPS += metadb
+    ########################
+    # Copy libretro.sqlite #
+    ########################
+        copy_libretro_db.target +=   $$TARGET_PATH/metadata/libretro.sqlite
+        copy_libretro_db.depends +=  $$PWD/metadata/libretro.sqlite
+        copy_libretro_db.commands += $(COPY_FILE) \"$$SOURCE_PATH/metadata/libretro.sqlite\" \"$$TARGET_PATH/metadata/libretro.sqlite\"
 
-    # Make qmake aware that this target exists
+        QMAKE_EXTRA_TARGETS += copy_metadata_db copy_libretro_db
 
+        PRE_TARGETDEPS += $$copy_metadata_db.target
+        PRE_TARGETDEPS += $$copy_libretro_db.target
 
+    #######################
+    # Copy backend plugin #
+    #######################
 
+        # If building in debug mode.
+        CONFIG(debug, debug|release) {
+            unix:backend_file=libbackend.so
+            macx:backend_file=libbackend_debug.dylib
+            win32:backend_file=backendd.dll
+        }
+        # If building in release mode.
+        CONFIG(release, debug|release) {
+            unix:backend_file=libbackend.so
+            macx:backend_file=backend.dylib
+            win32:backend_file=backend.dll
+        }
+        plugin_dir = $$TARGET_PATH/plugins/Phoenix/Backend
 
-#equals(_PRO_FILE_PWD_, $$OUT_PWD) {
+        copy_backend.target += $$plugin_dir/$$backend_file
+        macx: copy_backend.depends += $$clean_path($${TARGET_PATH}/../../../../backend/$$backend_file)
+        !macx: copy_backend.depends += $$clean_path($${TARGET_PATH}/../backend/$$backend_file)
+        copy_backend.commands += $(MKDIR) $$plugin_dir; $(COPY_FILE) \"$$copy_backend.depends\" \"$$copy_backend.target\"
 
-# [!! COPY FILES COMMANDS !!]
-_________________________________________________________________________________________________________________________________
+    ##############################
+    # Copy backend's qmldir file #
+    ##############################
 
-    copy_metadata_db.target +=   $$TARGET_PATH/metadata/openvgdb.sqlite
-    copy_metadata_db.depends +=  $$PWD/metadata/openvgdb.sqlite
-    copy_metadata_db.commands += $(MKDIR) $$TARGET_PATH/metadata; $(COPY_FILE) \"$$SOURCE_PATH/metadata/openvgdb.sqlite\" \"$$TARGET_PATH/metadata/openvgdb.sqlite\"
+        # Copy to the plugin folder.
+        copy_qmldir.target += $$plugin_dir/qmldir
+        macx: copy_qmldir.depends += $$clean_path($${TARGET_PATH}/../../../../backend/qmldir)
+        !macx: copy_qmldir.depends += $$clean_path($${TARGET_PATH}/../backend/qmldir)
+        copy_qmldir.commands += $(COPY_FILE) \"$$copy_qmldir.depends\" \"$$copy_qmldir.target\"
 
-    copy_libretro_db.target +=   $$TARGET_PATH/metadata/libretro.sqlite
-    copy_libretro_db.depends +=  $$PWD/metadata/libretro.sqlite
-    copy_libretro_db.commands += $(COPY_FILE) \"$$SOURCE_PATH/metadata/libretro.sqlite\" \"$$TARGET_PATH/metadata/libretro.sqlite\"
+        QMAKE_EXTRA_TARGETS += copy_backend copy_qmldir
+        PRE_TARGETDEPS += $$copy_backend.target $$copy_qmldir.target
+____________________________________________________________________
+#########################
+# Make Install Commands #
+#########################
 
-    QMAKE_EXTRA_TARGETS += copy_metadata_db copy_libretro_db
-
-    PRE_TARGETDEPS += $$copy_metadata_db.target
-    PRE_TARGETDEPS += $$copy_libretro_db.target
-__________________________________________________________________________________________________________________________________
-
-# [!! MAKE INSTALL COMMANDS !!] ##################################################################################################
     metadb.files += "$$PWD/metadata/openvgdb.sqlite" \
                     "$$PWD/metadata/libretro.sqlite"
     metadb.path = "$$PREFIX/metadata"
     unix: metadb.path = "$$PREFIX/share/phoenix/metadata"
     INSTALLS += metadb
-__________________________________________________________________________________________________________________________________
 
-CONFIG(debug, debug|release) {
-    unix:backend_file=libbackend.so
-    macx:backend_file=libbackend_debug.dylib
-    win32:backend_file=backendd.dll
-}
+    ##############
+    # Linux icon #
+    ##############
 
-CONFIG(release, debug|release) {
-    unix:backend_file=libbackend.so
-    macx:backend_file=backend.dylib
-    win32:backend_file=backend.dll
-}
+        unix: !macx {
+            # Ideally these files should come from the build folder, however, qmake will not generate rules for them if they don't
+            # already exist
+            linuxicon.depends += "$$PWD/phoenix.png"
 
-    plugin_dir = $$TARGET_PATH/plugins/Phoenix/Backend
+            # For make install
+            linuxicon.files += "$$PWD/phoenix.png"
 
-    copy_backend.target += $$plugin_dir/$$backend_file
-    macx: copy_backend.depends += $$clean_path($${TARGET_PATH}/../../../../backend/$$backend_file)
-    !macx: copy_backend.depends += $$clean_path($${TARGET_PATH}/../backend/$$backend_file)
-    copy_backend.commands += $(MKDIR) $$plugin_dir; $(COPY_FILE) \"$$copy_backend.depends\" \"$$copy_backend.target\"
+            linuxicon.path = "$$PREFIX/share/pixmaps"
+            INSTALLS += linuxicon
 
-    copy_qmldir.target += $$plugin_dir/qmldir
-    macx: copy_qmldir.depends += $$clean_path($${TARGET_PATH}/../../../../backend/qmldir)
-    !macx: copy_qmldir.depends += $$clean_path($${TARGET_PATH}/../backend/qmldir)
-    copy_qmldir.commands += $(COPY_FILE) \"$$copy_qmldir.depends\" \"$$copy_qmldir.target\"
+            # Make qmake aware that this target exists
+            QMAKE_EXTRA_TARGETS += linuxicon
+        }
 
-   QMAKE_EXTRA_TARGETS += copy_backend copy_qmldir
-   PRE_TARGETDEPS += $$copy_backend.target $$copy_qmldir.target
+    ########################
+    # Linux .desktop entry #
+    ########################
 
+        unix: !macx {
+            # Ideally these files should come from the build folder, however, qmake will not generate rules for them if they don't
+            # already exist
+            linuxdesktopentry.depends += "$$PWD/phoenix.desktop"
 
-#
-##
-## Linux icon
-##
+            # For make install
+            linuxdesktopentry.files += "$$PWD/phoenix.desktop"
 
-    unix: !macx {
-        # Ideally these files should come from the build folder, however, qmake will not generate rules for them if they don't
-        # already exist
-        linuxicon.depends += "$$PWD/phoenix.png"
+            linuxdesktopentry.path = "$$PREFIX/share/applications"
+            INSTALLS += linuxdesktopentry
 
-        # For make install
-        linuxicon.files += "$$PWD/phoenix.png"
+            # Make qmake aware that this target exists
+            QMAKE_EXTRA_TARGETS += linuxdesktopentry
+        }
 
-        linuxicon.path = "$$PREFIX/share/pixmaps"
-        INSTALLS += linuxicon
+    ############################
+    # OSX, Copy to .app folder #
+    ############################
 
-        # Make qmake aware that this target exists
-        QMAKE_EXTRA_TARGETS += linuxicon
-    }
+    # On OSX, ignore all of the above when it comes to make install and
+    # just copy the whole .app folder verbatim.
 
-##
-## Linux .desktop entry
-##
+        macx {
+            macxinstall.path = "$$PREFIX/"
+            macxinstall.extra = mkdir -p \"$$PREFIX\" &&\
+                                cp -p -R \"$$TARGET_APP\" \"$$PREFIX\" &&\
+                                rm -f \"$$PREFIX_PATH/$$PORTABLE_FILENAME\"
 
-    unix: !macx {
-        # Ideally these files should come from the build folder, however, qmake will not generate rules for them if they don't
-        # already exist
-        linuxdesktopentry.depends += "$$PWD/phoenix.desktop"
-
-        # For make install
-        linuxdesktopentry.files += "$$PWD/phoenix.desktop"
-
-        linuxdesktopentry.path = "$$PREFIX/share/applications"
-        INSTALLS += linuxdesktopentry
-
-        # Make qmake aware that this target exists
-        QMAKE_EXTRA_TARGETS += linuxdesktopentry
-    }
-
-##
-## On OS X, ignore all of the above when it comes to make install and just copy the whole .app folder verbatim
-##
-
-    macx {
-        macxinstall.path = "$$PREFIX/"
-        macxinstall.extra = mkdir -p \"$$PREFIX\" &&\
-                            cp -p -R \"$$TARGET_APP\" \"$$PREFIX\" &&\
-                            rm -f \"$$PREFIX_PATH/$$PORTABLE_FILENAME\"
-
-        # Note the lack of +
-        INSTALLS = macxinstall
-    }
-
-##
-## Debugging info
-##
+            # Note the lack of +
+            INSTALLS = macxinstall
+        }
+____________________________________________________________________
+##################
+# Debugging info #
+##################
 
     # win32 {
     #     !build_pass: message( PWD: $$PWD )
