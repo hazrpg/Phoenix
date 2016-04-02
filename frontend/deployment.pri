@@ -1,20 +1,20 @@
-###################
-# Executable Info #
-###################
+##
+## Executable Info
+##
 
     TARGET = Phoenix
 
     # App icon, metadata
     win32: RC_FILE = phoenix.rc
     macx: ICON = phoenix.icns
-____________________________________________________________________
-##########
-# Common #
-##########
 
-    ################################
-    # Get Source and Target's Path #
-    ################################
+##
+## Common
+##
+
+    ##
+    ## Get Source and Target's Path
+    ##
 
         # On Windows, the DOS qmake paths must be converted to Unix paths as the GNU coreutils we'll be using expect that
         # The default prefix is a folder called "Phoenix" at the root of the build folder
@@ -46,18 +46,18 @@ ____________________________________________________________________
     # Force the Phoenix binary to be relinked if the backend code has changed
     TARGETDEPS += ../externals/quazip/quazip/libquazip.a
 
-    #########################
-    # Make Install Commands #
-    #########################
+    ##
+    ## Make Install Commands
+    ##
 
         # Make sure it gets installed
         target.path = "$$PREFIX"
         unix: !macx: target.path = "$$PREFIX/bin"
         INSTALLS += target
 
-    ########################
-    # Create Portable File #
-    ########################
+    ##
+    ## Create Portable File
+    ##
 
         # Make sure that the portable file gets made in the build folder
 
@@ -72,10 +72,10 @@ ____________________________________________________________________
 
         # Make qmake aware that this target exists
         QMAKE_EXTRA_TARGETS += portablefile
-____________________________________________________________________
-#########################
-# Portable Distribution #
-#########################
+
+##
+## Portable Distribution
+##
 
 # Copy just the files needed for a portable build to the given
 # prefix so it can be archived and distributed.
@@ -103,22 +103,22 @@ ____________________________________________________________________
                              cp -p -f \"$$TARGET_PATH/metadata/openvgdb.sqlite\" \"$$PREFIX/Metadata/openvgdb.sqlite\" &&\
                              cp -p -f \"$$TARGET_PATH/metadata/libretro.sqlite\" \"$$PREFIX/Metadata/libretro.sqlite\"
     }
-_________________________________________________________________
-######################
-# Copy File Commands #
-######################
 
-    ########################
-    # Copy openvgdb.sqlite #
-    ########################
+##
+## Copy File Commands
+##
+
+    ##
+    ## Copy openvgdb.sqlite
+    ##
 
         copy_metadata_db.target +=   $$TARGET_PATH/metadata/openvgdb.sqlite
         copy_metadata_db.depends +=  $$PWD/metadata/openvgdb.sqlite
         copy_metadata_db.commands += $(MKDIR) $$TARGET_PATH/metadata; $(COPY_FILE) \"$$SOURCE_PATH/metadata/openvgdb.sqlite\" \"$$TARGET_PATH/metadata/openvgdb.sqlite\"
 
-    ########################
-    # Copy libretro.sqlite #
-    ########################
+    ##
+    ## Copy libretro.sqlite
+    ##
         copy_libretro_db.target +=   $$TARGET_PATH/metadata/libretro.sqlite
         copy_libretro_db.depends +=  $$PWD/metadata/libretro.sqlite
         copy_libretro_db.commands += $(COPY_FILE) \"$$SOURCE_PATH/metadata/libretro.sqlite\" \"$$TARGET_PATH/metadata/libretro.sqlite\"
@@ -128,9 +128,9 @@ _________________________________________________________________
         PRE_TARGETDEPS += $$copy_metadata_db.target
         PRE_TARGETDEPS += $$copy_libretro_db.target
 
-    #######################
-    # Copy backend plugin #
-    #######################
+    ##
+    ## Copy backend plugin
+    ##
 
         # If building in debug mode.
         CONFIG(debug, debug|release) {
@@ -151,9 +151,9 @@ _________________________________________________________________
         !macx: copy_backend.depends += $$clean_path($${TARGET_PATH}/../backend/$$backend_file)
         copy_backend.commands += $(MKDIR) $$plugin_dir; $(COPY_FILE) \"$$copy_backend.depends\" \"$$copy_backend.target\"
 
-    ##############################
-    # Copy backend's qmldir file #
-    ##############################
+    ##
+    ## Copy backend's qmldir file
+    ##
 
         # Copy to the plugin folder.
         copy_qmldir.target += $$plugin_dir/qmldir
@@ -163,10 +163,10 @@ _________________________________________________________________
 
         QMAKE_EXTRA_TARGETS += copy_backend copy_qmldir
         PRE_TARGETDEPS += $$copy_backend.target $$copy_qmldir.target
-____________________________________________________________________
-#########################
-# Make Install Commands #
-#########################
+
+##
+## Make Install Commands
+##
 
     metadb.files += "$$PWD/metadata/openvgdb.sqlite" \
                     "$$PWD/metadata/libretro.sqlite"
@@ -174,9 +174,9 @@ ____________________________________________________________________
     unix: metadb.path = "$$PREFIX/share/phoenix/metadata"
     INSTALLS += metadb
 
-    ##############
-    # Linux icon #
-    ##############
+    ##
+    ## Linux icon
+    ##
 
         unix: !macx {
             # Ideally these files should come from the build folder, however, qmake will not generate rules for them if they don't
@@ -193,9 +193,9 @@ ____________________________________________________________________
             QMAKE_EXTRA_TARGETS += linuxicon
         }
 
-    ########################
-    # Linux .desktop entry #
-    ########################
+    ##
+    ## Linux .desktop entry
+    ##
 
         unix: !macx {
             # Ideally these files should come from the build folder, however, qmake will not generate rules for them if they don't
@@ -212,9 +212,9 @@ ____________________________________________________________________
             QMAKE_EXTRA_TARGETS += linuxdesktopentry
         }
 
-    ############################
-    # OSX, Copy to .app folder #
-    ############################
+    ##
+    ## OSX, Copy to .app folder
+    ##
 
     # On OSX, ignore all of the above when it comes to make install and
     # just copy the whole .app folder verbatim.
@@ -228,10 +228,9 @@ ____________________________________________________________________
             # Note the lack of +
             INSTALLS = macxinstall
         }
-____________________________________________________________________
-##################
-# Debugging info #
-##################
+##
+## Debugging info
+##
 
     # win32 {
     #     !build_pass: message( PWD: $$PWD )

@@ -21,7 +21,7 @@
         };
 
         static QSqlDatabase database() = 0;
-        static void open(  ) = 0;
+        static void open() = 0;
         static void close() = 0;
         static void addDatabase() = 0;
         static void removeDatabase() = 0;
@@ -51,9 +51,7 @@ namespace Library {
             //    return database();
            // }
 
-            explicit operator QSqlQuery() {
-                return QSqlQuery( database() );
-            }
+            explicit operator QSqlQuery();
 
             QSqlDatabase database() const;
 
@@ -62,12 +60,9 @@ namespace Library {
 
             static void addDatabase();
             static void removeDatabase();
-
             static void addConnection( const QString &name );
 
-            static QSqlDatabase connection( const QString &name ) {
-                return QSqlDatabase::database( name );
-            }
+            static QSqlDatabase connection( const QString &name );
 
             static QMutex mutex;
 

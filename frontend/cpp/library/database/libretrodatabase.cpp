@@ -17,6 +17,10 @@ LibretroDatabase::~LibretroDatabase() {
     close( mMode );
 }
 
+Library::LibretroDatabase::operator QSqlQuery() {
+    return QSqlQuery( database() );
+}
+
 void LibretroDatabase::close( const ThreadMode mode ) {
     if( QSqlDatabase::contains( QStringLiteral( "SYSTEMS" ) ) ) {
         qDebug( phxLibrary ) << "closing SYSTEM database";
@@ -55,6 +59,10 @@ void LibretroDatabase::addConnection( const QString &name ) {
 
         db.setDatabaseName( filePath );
     }
+}
+
+QSqlDatabase LibretroDatabase::connection(const QString &name) {
+    return QSqlDatabase::database( name );
 }
 
 QSqlDatabase LibretroDatabase::database() const {

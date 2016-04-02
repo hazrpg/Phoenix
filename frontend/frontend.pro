@@ -1,18 +1,18 @@
 include( deployment.pri )
-_______________________________________________________________
-###############
-# Qt Settings #
-###############
+
+##
+## Qt Settings
+##
 
     # Undefine this (for some reason it's on by default on Windows)
     CONFIG -= debug_and_release debug_and_release_target
 
     CONFIG += c++11
     QT += qml quick sql multimedia network concurrent
-____________________________________________________________________
-#####################
-# Compiler Settings #
-#####################
+
+##
+## Compiler Settings
+##
 
     TEMPLATE += app
 
@@ -128,14 +128,13 @@ ____________________________________________________________________
                  qml/BigPicture/bigpicture.qrc \
                  qml/MouseDrivenView/mousedrivenview.qrc \
                  qml/GameView/gameview.qrc
-____________________________________________________________________
-###################
-# Linker settings #
-###################
+##
+## Linker settings
+##
 
-    #########
-    # Paths #
-    #########
+    ##
+    ## Paths
+    ##
 
         # Externals
         LIBS += -L../externals/quazip/quazip
@@ -143,9 +142,9 @@ ____________________________________________________________________
         # SDL2
         macx: LIBS += -L/usr/local/lib -L/opt/local/lib # Homebrew, MacPorts
 
-    #############
-    # Libraries #
-    #############
+    ##
+    ## Libraries
+    ##
 
         # Externals
         LIBS += -lquazip

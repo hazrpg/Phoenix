@@ -43,3 +43,13 @@ void CmdLineArgs::checkArgs( int argc, char *argv[] ) {
 
 }
 
+QString CmdLineArgs::coreName() const
+{
+    return qmlCore;
+}
+
+QString CmdLineArgs::gameName() const
+{
+    return qmlGame;
+}
+

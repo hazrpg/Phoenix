@@ -14,15 +14,8 @@ public:
 
     static void checkArgs( int argc, char *argv[] );
 
-    QString coreName() const
-    {
-        return qmlCore;
-    }
-
-    QString gameName() const
-    {
-        return qmlGame;
-    }
+    QString coreName() const;
+    QString gameName() const;
 
     static char **argv;
     static int argc;
