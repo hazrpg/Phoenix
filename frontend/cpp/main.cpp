@@ -31,7 +31,7 @@ using namespace Library;
 void phoenixDebugMessageHandler( QtMsgType type, const QMessageLogContext &context, const QString &msg ) {
 
     // Change this QString to reflect the message you want to get a stack trace for
-    if( QString( msg ).contains( QStringLiteral( "YOUR MESSAGE HERE" ) ) ) {
+    if( QString( msg ).contains( QStringLiteral( "QBasicTimer" ) ) ) {
 
         // Put a breakpoint over this line...
         int breakPointOnThisLine( 0 );
@@ -125,8 +125,6 @@ void phoenixDebugMessageLog( QtMsgType type, const QMessageLogContext &context, 
 
 int main( int argc, char *argv[] ) {
 
-    CmdLineArgs::checkArgs( argc, argv );
-
     // Uncomment this to enable the message handler for debugging and stack tracing
     // qInstallMessageHandler( phoenixDebugMessageHandler );
 
@@ -161,6 +159,7 @@ int main( int argc, char *argv[] ) {
     logFP = fdopen( dup( logFD ), "w" );
     qInstallMessageHandler( phoenixDebugMessageLog );
 #endif
+
 
     // Add database handles to the SQL database list.
     Library::MetaDataDatabase::addDatabase();
@@ -201,22 +200,23 @@ int main( int argc, char *argv[] ) {
         stream << "# Insert your custom definitions here" << endl;
     }
 
-    // Set InputManager's custom controller DB file
-    QQmlProperty prop( engine.rootObjects().first(), "inputManager.controllerDBFile" );
-    Q_ASSERT( prop.isValid() );
-    QString path = Library::PhxPaths::userDataLocation() % QStringLiteral( "/gamecontrollerdb.txt" );
-    QVariant pathVar( path );
-    prop.write( pathVar );
+    // Set GamepadManager's custom controller DB file
+    //QQmlProperty prop( engine.rootObjects().first(), "inputManager.controllerDBFile" );
+    //Q_ASSERT( prop.isValid() );
+    //QString path = Library::PhxPaths::userDataLocation() % QStringLiteral( "/gamecontrollerdb.txt" );
+   // QVariant pathVar( path );
+   // prop.write( pathVar );
 
     // Run the app and write return code to the log file if in release mode
+
+    int exec = app.exec();
 #ifdef QT_NO_DEBUG
-    int ret = app.exec();
-    fprintf( logFP, "Returned %d\n", ret );
+    fprintf( logFP, "Returned %d\n", exec );
     fclose( logFP );
-    return ret;
-#else
-    // Otherwise, just run it normally
-    return app.exec();
 #endif
+    // Otherwise, just run it normally
+
+    Q_ASSERT( exec == 0 );
+    return exec;
 
 }

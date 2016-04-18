@@ -107,7 +107,7 @@ Rectangle {
                         stepSize: 0.01;
                         activeFocusOnPress: true;
                         tickmarksEnabled: false;
-                        onValueChanged: { coreControl.volume = value; }
+                        onValueChanged: { gameConsole.volume = value; }
 
                         style: SliderStyle {
                             handle: Item {

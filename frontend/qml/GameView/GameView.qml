@@ -16,36 +16,20 @@ Rectangle {
     color: PhxTheme.common.gameViewBackgroundColor;
 
     // Automatically set by VideoItem, true if a game is loaded and unpaused
-    property bool running: coreControl.state === Control.PLAYING;
-    property alias coreState: coreControl.state;
-    property alias coreControl: coreControl;
-    property alias videoOutput: videoOutput;
+    property bool running: gameConsole.state === Control.PLAYING;
+    property alias coreState: gameConsole.state;
+    property alias gameConsole: gameConsole;
+    property alias videoOutput: phxVideoOutput;
     property bool showBar: true;
     property string title: "";
     property string artworkURL: "";
 
     // Object that handles the running game session
 
-    CoreControl {
-        id: coreControl;
-        Component.onCompleted: {
-            this.videoOutput = videoOutput;
-            this.inputManager = root.inputManager;
+    GameConsole {
+        id: gameConsole;
 
-            if ( root.cmdLineArgs.coreFound() && root.cmdLineArgs.gameFound() ) {
-                var dict = {};
-                dict["type"] = "libretro";
-                dict["core"] = root.cmdLineArgs.coreName;
-                dict["game"] = root.cmdLineArgs.gameName;
-
-                coreControl.source = dict;
-
-                // Connect the next callback in the chain to be called once the load begins/ends
-                coreControl.stateChanged.connect( root.stateChangedCallback );
-
-                coreControl.load();
-            }
-        }
+        videoOutput: phxVideoOutput;
 
         vsync: false;
         volume: gameActionBar.volumeValue;
@@ -61,16 +45,17 @@ Rectangle {
         }
 
         onStateChanged: {
+            root.stateChangedCallback( state );
             switch( state ) {
                 case Control.STOPPED:
-                    videoOutput.opacity = 0.0;
+                    phxVideoOutput.opacity = 0.0;
                     resetCursor();
                     cursorTimer.stop();
                     showBar = true;
                     break;
 
                 case Control.LOADING:
-                    videoOutput.opacity = 0.0;
+                    phxVideoOutput.opacity = 0.0;
                     resetCursor();
                     cursorTimer.stop();
                     break;
@@ -81,11 +66,11 @@ Rectangle {
                     rootMouseArea.cursorShape = Qt.BlankCursor;
 
                     // Show the game content
-                    videoOutput.opacity = 1.0;
+                    phxVideoOutput.opacity = 1.0;
 
                     // Let the window be resized even smaller than the default minimum size according to the aspect ratio
-                    root.minimumWidth = Math.min( root.defaultMinWidth, root.defaultMinWidth / videoOutput.aspectRatio / 2 );
-                    root.minimumHeight = Math.min( root.defaultMinHeight, root.defaultMinHeight / videoOutput.aspectRatio / 2 );
+                    root.minimumWidth = Math.min( root.defaultMinWidth, root.defaultMinWidth / phxVideoOutput.aspectRatio / 2 );
+                    root.minimumHeight = Math.min( root.defaultMinHeight, root.defaultMinHeight / phxVideoOutput.aspectRatio / 2 );
 
                     break;
 
@@ -99,7 +84,7 @@ Rectangle {
                         }
                     }
 
-                    videoOutput.opacity = 1.0;
+                    phxVideoOutput.opacity = 1.0;
                     resetCursor();
                     cursorTimer.stop();
                     break;
@@ -107,7 +92,7 @@ Rectangle {
                 case Control.UNLOADING:
                     root.title = "Unloading - " + title;
                     firstLaunch = true;
-                    videoOutput.opacity = 0.0;
+                    phxVideoOutput.opacity = 0.0;
                     resetCursor();
                     cursorTimer.stop();
                     break;
@@ -132,7 +117,7 @@ Rectangle {
             source: "phoenix.png";
             sourceSize { height: height; width: width; }
             opacity: 0.25;
-            enabled: videoOutput.opacity === 1.0 ? false : true;
+            enabled: phxVideoOutput.opacity === 1.0 ? false : true;
         }
 
         // Glow effect for the logo
@@ -143,7 +128,7 @@ Rectangle {
             color: "#d55b4a";
             radius: 8.0;
             samples: 16;
-            enabled: videoOutput.opacity === 1.0 ? false : true;
+            enabled: phxVideoOutput.opacity === 1.0 ? false : true;
             SequentialAnimation on radius {
                 loops: Animation.Infinite;
                 PropertyAnimation { to: 16; duration: 2000; easing.type: Easing.InOutQuart; }
@@ -154,23 +139,23 @@ Rectangle {
     }
 
     // VideoOutput settings
-    property alias aspectMode: videoOutput.aspectMode;
-    property alias linearFiltering: videoOutput.linearFiltering;
-    property alias television: videoOutput.television;
-    property alias ntsc: videoOutput.ntsc;
-    property alias widescreen: videoOutput.widescreen;
+    property alias aspectMode: phxVideoOutput.aspectMode;
+    property alias linearFiltering: phxVideoOutput.linearFiltering;
+    property alias television: phxVideoOutput.television;
+    property alias ntsc: phxVideoOutput.ntsc;
+    property alias widescreen: phxVideoOutput.widescreen;
 
     // A blurred copy of the video that sits behind the real video as an effect
     FastBlur {
         id: blurEffect;
         anchors.fill: parent;
-        source: videoOutput;
+        source: phxVideoOutput;
         radius: 64;
     }
 
     // QML-based video output module
     VideoOutput {
-        id: videoOutput;
+        id: phxVideoOutput;
         anchors.centerIn: parent;
 
         // Scaling
@@ -283,7 +268,7 @@ Rectangle {
                     touch = Qt.point( ( width - mouseX ) / width, ( height - mouseY ) / height );
                     touched = pressedButtons & Qt.LeftButton;
                     // console.log( touch + " touched = " + touched + " (normal event)" );
-                    root.inputManager.updateTouchState( touch, touched );
+                    //root.inputManager.updateTouchState( touch, touched );
                 }
             }
 
@@ -294,8 +279,8 @@ Rectangle {
             function forceAnEvent( mouse ) {
                 if( root.touchMode && mouse.button === Qt.LeftButton ) {
                     // console.log( touch + " touched = true (event forced)" );
-                    root.inputManager.updateTouchState( touch, true );
-                    root.inputManager.updateTouchState( touch, false );
+                    //root.inputManager.updateTouchState( touch, true );
+                    //root.inputManager.updateTouchState( touch, false );
                 }
             }
         }

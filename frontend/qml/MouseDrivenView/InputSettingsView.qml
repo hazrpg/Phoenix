@@ -21,19 +21,6 @@ Item {
             // Clear list
             clear();
 
-            // Make the InputManager emit the deviceAdded signal for each known input device to populate the list
-            root.inputManager.deviceAdded.connect( handleDeviceAdded );
-            root.inputManager.emitConnectedDevices();
-        }
-
-        Component.onDestruction: {
-            root.inputManager.deviceAdded.disconnect( handleDeviceAdded );
-            for ( var i = 0; i < root.inputManager.count; ++i ) {
-                if ( root.inputManager.at( i ) ) {
-                    root.inputManager.at( i ).editMode = false;
-                    // root.inputManager.at( i ).editModeEvent.disconnect();
-                }
-            }
         }
 
     }
@@ -147,12 +134,13 @@ Item {
                         }
                     }
 
+                    /*
                     model: ListModel {
                         ListElement { displayButton: "A"; key: "a"; value: InputDeviceEvent.A }
                         ListElement { displayButton: "B"; key: "b"; value: InputDeviceEvent.B }
                         ListElement { displayButton: "X"; key: "x"; value: InputDeviceEvent.X }
                         ListElement { displayButton: "Y"; key: "y"; value: InputDeviceEvent.Y }
-                    }
+                    }*/
                 }
 
                 InputMappingColumn {
@@ -169,12 +157,13 @@ Item {
                         }
                     }
 
+                    /*
                     model: ListModel {
                         ListElement { displayButton: "Up"; key: "dpup"; value: InputDeviceEvent.Up }
                         ListElement { displayButton: "Left"; key: "dpleft"; value: InputDeviceEvent.Left }
                         ListElement { displayButton: "Right"; key: "dpright"; value: InputDeviceEvent.Right }
                         ListElement { displayButton: "Down"; key: "dpdown"; value: InputDeviceEvent.Down }
-                    }
+                    }*/
                 }
 
                 InputMappingColumn {
@@ -193,6 +182,7 @@ Item {
                             exclusiveGroup.bindCheckable( miscButtonColumn );
                         }
                     }
+                    /*
                     model: ListModel {
                         ListElement { displayButton: "L3"; key: "leftstick"; value: InputDeviceEvent.L3 }
                         ListElement { displayButton: "R3"; key: "rightstick"; value: InputDeviceEvent.R2 }
@@ -200,7 +190,7 @@ Item {
                         ListElement { displayButton: "R"; key: "rightshoulder"; value: InputDeviceEvent.R }
                         ListElement { displayButton: "Start"; key: "start"; value: InputDeviceEvent.Start }
                         ListElement { displayButton: "Select"; key: "back"; value: InputDeviceEvent.Select }
-                    }
+                    }*/
                 }
 
                 /*

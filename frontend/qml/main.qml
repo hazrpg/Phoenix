@@ -34,9 +34,9 @@ ApplicationWindow {
         // Load complete, start game and hide library
         if( newState === Control.PAUSED ) {
             // Disconnect this callback once it's been used where we want it to be used
-            root.gameViewObject.coreControl.stateChanged.disconnect( stateChangedCallback );
+            root.gameViewObject.gameConsole.stateChanged.disconnect( stateChangedCallback );
 
-            root.gameViewObject.coreControl.play();
+            root.gameViewObject.gameConsole.play();
 
             // Destroy this library view and show the game
             layoutStackView.pop();
@@ -59,11 +59,6 @@ ApplicationWindow {
 
     GameLauncher {
         id: gameLauncher;
-    }
-
-    property InputManager inputManager: InputManager {
-        id: inputManager;
-        gamepadControlsFrontend: true;
     }
 
     property var gameViewObject: null;
@@ -169,6 +164,7 @@ ApplicationWindow {
             objectName: "GameView";
             visible: !layoutStackView.currentObjectName.localeCompare( objectName );
             enabled: visible;
+
         }
 
         MouseDrivenView {
