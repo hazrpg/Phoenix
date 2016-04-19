@@ -13,11 +13,13 @@
 #include "librarytypes.h"
 
 // Backend
-#include "cmdlineargs.h"
+#include "commandline.h"
 
 // Misc
 #include "logging.h"
 #include "phxpaths.h"
+
+#include <QApplication>
 
 using namespace Library;
 
@@ -131,18 +133,24 @@ int main( int argc, char *argv[] ) {
     QThread::currentThread()->setObjectName( "Main/QML thread" );
 
     // Handles stuff with the windowing system
-    QGuiApplication app( argc, argv );
+    QApplication app( argc, argv );
+
+    // Set application metadata
+    QApplication::setApplicationDisplayName( QStringLiteral( "Phoenix" ) );
+    QApplication::setApplicationName( QStringLiteral( "Phoenix" ) );
+    QApplication::setApplicationVersion( QStringLiteral( xstr( PHOENIX_VERSION_STR ) ) );
+    QApplication::setOrganizationName( QStringLiteral( "Team Phoenix" ) );
+    QApplication::setOrganizationDomain( QStringLiteral( "phoenix.vg" ) );
+
+    if ( CommandLine::checkCmdLineRun( app ) ) {
+        if ( !CommandLine::setArgs( app ) ) {
+            return 1;
+        }
+    }
 
     // The engine that runs our QML-based UI
     QQmlApplicationEngine engine;
     engine.addImportPath( app.applicationDirPath() + QStringLiteral( "/plugins" ) );
-
-    // Set application metadata
-    QGuiApplication::setApplicationDisplayName( QStringLiteral( "Phoenix" ) );
-    QGuiApplication::setApplicationName( QStringLiteral( "Phoenix" ) );
-    QGuiApplication::setApplicationVersion( QStringLiteral( xstr( PHOENIX_VERSION_STR ) ) );
-    QGuiApplication::setOrganizationName( QStringLiteral( "Team Phoenix" ) );
-    QGuiApplication::setOrganizationDomain( QStringLiteral( "phoenix.vg" ) );
 
     // Figure out the right paths for the environment, and create user storage folders if not already there
     Library::PhxPaths::initPaths();
@@ -166,11 +174,11 @@ int main( int argc, char *argv[] ) {
     Library::LibretroDatabase::addDatabase();
 
     // Necessary to quit properly from QML
-    QObject::connect( &engine, &QQmlApplicationEngine::quit, &app, &QGuiApplication::quit );
+    QObject::connect( &engine, &QQmlApplicationEngine::quit, &app, &QApplication::quit );
 
     // Register our custom types for use within QML
     // VideoItem::registerTypes();
-    qmlRegisterType<CmdLineArgs>( "vg.phoenix.backend", 1, 0, "CmdLineArgs" );
+    qmlRegisterSingletonType<CommandLine>( "Phoenix.Parse", 1, 0, "CommandLine", CommandLine::registerSingletonCallback );
 
     qRegisterMetaType<Library::FileEntry>( "FileEntry" );
 

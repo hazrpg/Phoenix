@@ -6,7 +6,6 @@ import QtQuick.Dialogs 1.2
 
 import vg.phoenix.models 1.0
 import vg.phoenix.themes 1.0
-import vg.phoenix.backend 1.0
 
 Item {
     Rectangle  {

@@ -8,7 +8,7 @@ include( deployment.pri )
     CONFIG -= debug_and_release debug_and_release_target
 
     CONFIG += c++11
-    QT += qml quick sql multimedia network concurrent
+    QT += qml quick sql multimedia network concurrent widgets
 
 ##
 ## Compiler Settings
@@ -89,8 +89,8 @@ include( deployment.pri )
                cpp/library/model/libretromodel.cpp \
                cpp/library/scanner/scannerutil.cpp \
                cpp/library/scanner/librarytypes.cpp \
-               cpp/cmdlineargs.cpp \
-               cpp/logging.cpp
+               cpp/logging.cpp \
+    cpp/commandline.cpp
 
     HEADERS += cpp/library/gamelauncher.h \
                cpp/library/imagecacher.h \
@@ -117,8 +117,8 @@ include( deployment.pri )
                cpp/library/scanner/filterfunctor.h \
                cpp/library/model/libretromodel.h \
                cpp/library/scanner/scannerutil.h \
-               cpp/cmdlineargs.h \
-               cpp/logging.h
+               cpp/logging.h \
+    cpp/commandline.h
 
     PRECOMPILED_HEADER = cpp/frontendcommon.h
 

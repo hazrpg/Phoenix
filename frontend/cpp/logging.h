@@ -5,6 +5,7 @@
 #include <QDebug>
 
 Q_DECLARE_LOGGING_CATEGORY( phxLibrary )
+Q_DECLARE_LOGGING_CATEGORY( phxCmdLine )
 
 
 #endif // LOGGING_H

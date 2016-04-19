@@ -4,7 +4,6 @@ import QtQuick.Layouts 1.1
 import QtQuick.Window 2.2
 import QtGraphicalEffects 1.0
 
-import vg.phoenix.backend 1.0
 import vg.phoenix.themes 1.0
 import vg.phoenix.launcher 1.0
 import vg.phoenix.paths 1.0
@@ -18,10 +17,6 @@ ApplicationWindow {
     width: Screen.width * 0.7;
     height: Screen.height * 0.7;
     color: "black";
-
-    property CmdLineArgs cmdLineArgs: CmdLineArgs {
-
-    }
 
     function stateChangedCallback( newState ) {
         console.log( "stateChangedCallback(" + newState + ")" );

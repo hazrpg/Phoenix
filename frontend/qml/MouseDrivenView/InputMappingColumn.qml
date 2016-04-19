@@ -3,7 +3,6 @@ import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.1
 
-import vg.phoenix.backend 1.0
 import vg.phoenix.themes 1.0
 
 ListView {
