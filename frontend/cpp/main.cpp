@@ -208,13 +208,6 @@ int main( int argc, char *argv[] ) {
         stream << "# Insert your custom definitions here" << endl;
     }
 
-    // Set GamepadManager's custom controller DB file
-    //QQmlProperty prop( engine.rootObjects().first(), "inputManager.controllerDBFile" );
-    //Q_ASSERT( prop.isValid() );
-    //QString path = Library::PhxPaths::userDataLocation() % QStringLiteral( "/gamecontrollerdb.txt" );
-   // QVariant pathVar( path );
-   // prop.write( pathVar );
-
     // Run the app and write return code to the log file if in release mode
 
     int exec = app.exec();

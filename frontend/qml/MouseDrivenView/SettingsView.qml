@@ -19,7 +19,7 @@ PhxScrollView {
         model: ListModel {
             id: settingsModel;
             ListElement { section: "Library"; rightPane: "LibrarySettingsView" }
-            // ListElement { section: "Input (coming soon...)"; rightPane: "InputSettingsView" }
+            ListElement { section: "Input"; rightPane: "InputSettingsView" }
             // ListElement { section: "Video"; }
             // ListElement { section: "Audio"; }
         }
@@ -69,7 +69,7 @@ PhxScrollView {
                         break;
                     case "Input":
                         if( contentArea.contentStackView.currentItem.objectName !== "InputSettingsView" ) {
-                            // contentArea.contentStackView.push( { item: contentArea.contentInputSettingsView, replace: true } );
+                            contentArea.contentStackView.push( { item: contentArea.contentInputSettingsView, replace: true } );
                         }
                         break;
                     default:

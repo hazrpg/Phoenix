@@ -27,6 +27,8 @@ Rectangle {
 
     property alias gamepads: gameConsole.gamepadList;
 
+    signal gamepadAdded( var gamepad )
+
 
 
     // Object that handles the running game session
@@ -49,6 +51,8 @@ Rectangle {
 
         onGamepadAddedChanged: {
             gamepadList.push( gamepadAdded );
+            gameView.gamepadAdded( gamepadAdded );
+            console.log( "gamepad Added");
         }
 
         onSourceChanged: {

@@ -18,6 +18,8 @@ ApplicationWindow {
     height: Screen.height * 0.7;
     color: "black";
 
+    property alias gameConsoleView: gameView;
+
     function stateChangedCallback( newState ) {
         console.log( "stateChangedCallback(" + newState + ")" );
 

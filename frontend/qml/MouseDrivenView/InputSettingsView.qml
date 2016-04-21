@@ -12,37 +12,12 @@ Item {
     width: 100
     height: 62
 
-
-    property ListModel inputDevicesModel: ListModel {
-        ListElement { name: ""; port: 0  }
-
-        Component.onCompleted: {
-
-            // Clear list
-            clear();
-
-        }
-
-    }
-
     ExclusiveGroup {
         id: inputColumnGroup;
     }
 
-    function handleDeviceAdded( device ) {
 
-        // TODO: Set editMode only on one controller at a time
-        // device.editMode = true;
 
-        if (  inputDevicesModel.count > 0 && inputDevicesModel.get( 0 ).name === "" ) {
-            inputDevicesModel.set( 0, { "name": device.name } );
-        } else {
-            inputDevicesModel.append( { "name": device.name  } );
-        }
-    }
-
-    // This is a QVariantMap that is used to hold the currently selected device's mapping.
-    property var currentMapping: undefined;
 
     Item {
         anchors {
@@ -103,14 +78,20 @@ Item {
             ColumnLayout {
                 spacing: 6;
 
-                PhxComboBox {
+
+                ComboBox {
                     id: inputDeviceComboBox;
                     anchors {
                         right: parent.right;
                     }
+
+                    Component.onCompleted: {
+                        console.log("INPUTVIEW " + root)
+                    }
+
                 }
 
-                PhxComboBox {
+                ComboBox {
                     anchors {
                         right: parent.right;
                     }
@@ -134,13 +115,13 @@ Item {
                         }
                     }
 
-                    /*
+
                     model: ListModel {
-                        ListElement { displayButton: "A"; key: "a"; value: InputDeviceEvent.A }
-                        ListElement { displayButton: "B"; key: "b"; value: InputDeviceEvent.B }
-                        ListElement { displayButton: "X"; key: "x"; value: InputDeviceEvent.X }
-                        ListElement { displayButton: "Y"; key: "y"; value: InputDeviceEvent.Y }
-                    }*/
+                        ListElement { displayButton: "A"; key: "a"; }
+                        ListElement { displayButton: "B"; key: "b"; }
+                        ListElement { displayButton: "X"; key: "x"; }
+                        ListElement { displayButton: "Y"; key: "y"; }
+                    }
                 }
 
                 InputMappingColumn {

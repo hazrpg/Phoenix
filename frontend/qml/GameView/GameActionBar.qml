@@ -61,7 +61,7 @@ Rectangle {
                     anchors.fill: parent;
                     onClicked: {
                         if( gameView.running ) { coreControl.pause(); }
-                        else { coreControl.play(); }
+                        else { gameConsole.play(); }
                     }
                 }
             }
