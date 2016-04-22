@@ -17,18 +17,13 @@ Rectangle {
     color: PhxTheme.common.gameViewBackgroundColor;
 
     // Automatically set by VideoItem, true if a game is loaded and unpaused
-    property bool running: gameConsole.state === Control.PLAYING;
-    property alias coreState: gameConsole.state;
+    property bool running: gameConsole.state === GameConsole.Playing;
+    property alias coreState: gameConsole.playbackState;
     property alias gameConsole: gameConsole;
     property alias videoOutput: phxVideoOutput;
     property bool showBar: true;
     property string title: "";
     property string artworkURL: "";
-
-    property alias gamepads: gameConsole.gamepadList;
-
-    signal gamepadAdded( var gamepad )
-
 
 
     // Object that handles the running game session
@@ -47,37 +42,30 @@ Rectangle {
 
         src: CommandLine.args();
 
-        property var gamepadList: [];
-
-        onGamepadAddedChanged: {
-            gamepadList.push( gamepadAdded );
-            gameView.gamepadAdded( gamepadAdded );
-            console.log( "gamepad Added");
-        }
-
         onSourceChanged: {
             title = source[ "title" ];
             artworkURL = source[ "artworkURL" ];
             root.touchMode = source[ "core" ].indexOf( "desmume" ) > -1;
         }
 
-        onStateChanged: {
-            root.stateChangedCallback( state );
-            switch( state ) {
-                case Control.STOPPED:
+        onPlaybackStateChanged: {
+            root.stateChangedCallback( playbackState );
+            switch( playbackState ) {
+                case GameConsole.Stopped:
                     phxVideoOutput.opacity = 0.0;
                     resetCursor();
                     cursorTimer.stop();
                     showBar = true;
                     break;
 
-                case Control.LOADING:
+                case GameConsole.Loading:
                     phxVideoOutput.opacity = 0.0;
                     resetCursor();
                     cursorTimer.stop();
                     break;
 
-                case Control.PLAYING:
+                case GameConsole.Playing:
+
                     root.title = title;
 
                     rootMouseArea.cursorShape = Qt.BlankCursor;
@@ -91,7 +79,7 @@ Rectangle {
 
                     break;
 
-                case Control.PAUSED:
+                case GameConsole.Paused:
                     root.title = "Paused - " + title;
                     if( firstLaunch ) {
                         firstLaunch = false;
@@ -106,7 +94,7 @@ Rectangle {
                     cursorTimer.stop();
                     break;
 
-                case Control.UNLOADING:
+                case GameConsole.Unloading:
                     root.title = "Unloading - " + title;
                     firstLaunch = true;
                     phxVideoOutput.opacity = 0.0;
