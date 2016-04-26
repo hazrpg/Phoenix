@@ -126,7 +126,7 @@ Rectangle {
 
                 function stoppedCallback( newState ) {
                     console.log( "stoppedCallback(" + newState + ")" );
-                    if( newState === Control.STOPPED ) {
+                    if( newState === GameConsole.Stopped ) {
                         root.gameViewObject.coreControl.stateChanged.disconnect( stoppedCallback );
 
                         root.resetTitle();

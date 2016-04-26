@@ -17,14 +17,13 @@ Rectangle {
     color: PhxTheme.common.gameViewBackgroundColor;
 
     // Automatically set by VideoItem, true if a game is loaded and unpaused
-    property bool running: gameConsole.state === GameConsole.Playing;
-    property alias coreState: gameConsole.playbackState;
+    property bool running: gameConsole.playbackState === GameConsole.Playing;
+    property alias playbackState: gameConsole.playbackState;
     property alias gameConsole: gameConsole;
     property alias videoOutput: phxVideoOutput;
     property bool showBar: true;
     property string title: "";
     property string artworkURL: "";
-
 
     // Object that handles the running game session
 
@@ -42,14 +41,23 @@ Rectangle {
 
         src: CommandLine.args();
 
-        onSourceChanged: {
-            title = source[ "title" ];
-            artworkURL = source[ "artworkURL" ];
-            root.touchMode = source[ "core" ].indexOf( "desmume" ) > -1;
+        onGamepadAdded: {
+            GamepadModel.addGamepad( gamepad );
+            RemapModel.addGamepad( gamepad );
+        }
+
+        onGamepadRemoved: {
+            GamepadModel.removeGamepad( gamepad );
+            RemapModel.addGamepad( gamepad );
+        }
+
+        onSrcChanged: {
+            title = src[ "title" ];
+            artworkURL = src[ "artworkURL" ];
+            root.touchMode = src[ "core" ].indexOf( "desmume" ) > -1;
         }
 
         onPlaybackStateChanged: {
-            root.stateChangedCallback( playbackState );
             switch( playbackState ) {
                 case GameConsole.Stopped:
                     phxVideoOutput.opacity = 0.0;
@@ -65,9 +73,7 @@ Rectangle {
                     break;
 
                 case GameConsole.Playing:
-
                     root.title = title;
-
                     rootMouseArea.cursorShape = Qt.BlankCursor;
 
                     // Show the game content
@@ -273,7 +279,7 @@ Rectangle {
                     touch = Qt.point( ( width - mouseX ) / width, ( height - mouseY ) / height );
                     touched = pressedButtons & Qt.LeftButton;
                     // console.log( touch + " touched = " + touched + " (normal event)" );
-                    //root.inputManager.updateTouchState( touch, touched );
+                    //root.gamepadManager.updateTouchState( touch, touched );
                 }
             }
 
@@ -284,8 +290,8 @@ Rectangle {
             function forceAnEvent( mouse ) {
                 if( root.touchMode && mouse.button === Qt.LeftButton ) {
                     // console.log( touch + " touched = true (event forced)" );
-                    //root.inputManager.updateTouchState( touch, true );
-                    //root.inputManager.updateTouchState( touch, false );
+                    //root.gamepadManager.updateTouchState( touch, true );
+                    //root.gamepadManager.updateTouchState( touch, false );
                 }
             }
         }
@@ -306,9 +312,9 @@ Rectangle {
         opacity: {
             if( root.touchMode ) {
                 opacity: 0.0;
-                if( gameView.showBar || gameView.coreState === Control.PAUSED ) opacity: 1.0;
+                if( gameView.showBar || gameView.playbackState === GameConsole.Paused ) opacity: 1.0;
             } else {
-                if( ( gameView.coreState === Control.PAUSED || cursorTimer.running || gameActionBarMouseArea.containsMouse )
+                if( ( gameConsole.playbackState === GameConsole.Paused || cursorTimer.running || gameActionBarMouseArea.containsMouse )
                     && ( !layoutStackView.transitioning ) ) {
                     opacity: 1.0
                 } else {
@@ -327,7 +333,7 @@ Rectangle {
         height: contentHeight * 2;
 
         opacity: gameActionBar.opacity;
-        visible: root.touchMode && gameView.coreState === Control.PLAYING;
+        visible: root.touchMode && gameView.playbackState === GameConsole.Playing;
         enabled: visible;
 
         verticalAlignment: Text.AlignVCenter;

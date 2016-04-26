@@ -16,9 +16,6 @@ Item {
         id: inputColumnGroup;
     }
 
-
-
-
     Item {
         anchors {
             left: parent.left;
@@ -85,84 +82,123 @@ Item {
                         right: parent.right;
                     }
 
-                    Component.onCompleted: {
-                        console.log("INPUTVIEW " + root)
+                    model: GamepadModel;
+                    textRole: "name";
+
+                    onCurrentIndexChanged: {
+                        RemapModel.currentIndex( inputDeviceComboBox.currentIndex );
                     }
 
+                    Component.onCompleted: {
+                        RemapModel.currentIndex( inputDeviceComboBox.currentIndex );
+                    }
                 }
 
                 ComboBox {
                     anchors {
                         right: parent.right;
                     }
-                    model: [ "Player 1" ];
+                   // model: RemapModel;
+                    //textRole: "mapping";//[ "Player 1" ];
                 }
 
-                InputMappingColumn {
-                    id: actionButtonColumn;
+                ListView {
+                    anchors {
+                        right: parent.right;
+                    }
 
                     Layout.fillWidth: true;
 
-                    height: 175;
+                    height: 500;
 
-                    headerText: qsTr( "Actions" );
-                    exclusiveGroup: inputColumnGroup;
-                    checked: false;
+                    orientation: ListView.Vertical;
 
-                    onExclusiveGroupChanged: {
-                        if ( exclusiveGroup ) {
-                            exclusiveGroup.bindCheckable( actionButtonColumn );
+
+                    model: RemapModel;
+
+                    delegate: Item {
+                        height: 50;
+                        width: 100;
+                        Rectangle {
+                            color: "red";
+                            anchors.fill: parent;
+
+                            Row {
+                                spacing: 12;
+                                anchors.centerIn: parent;
+                                Text {
+                                    text: buttonKey;
+
+                                }
+
+                                Text {
+                                    text: buttonValue;
+                                }
+                            }
+
                         }
-                    }
-
-
-                    model: ListModel {
-                        ListElement { displayButton: "A"; key: "a"; }
-                        ListElement { displayButton: "B"; key: "b"; }
-                        ListElement { displayButton: "X"; key: "x"; }
-                        ListElement { displayButton: "Y"; key: "y"; }
                     }
                 }
 
-                InputMappingColumn {
-                    id: dpadButtonColumn;
-                    Layout.fillWidth: true;
-                    height: 175;
-                    headerText: qsTr( "Digital" );
-                    exclusiveGroup: inputColumnGroup;
-                    checked: false;
+//                InputMappingColumn {
+//                    id: actionButtonColumn;
 
-                    onExclusiveGroupChanged: {
-                        if ( exclusiveGroup ) {
-                            exclusiveGroup.bindCheckable( dpadButtonColumn );
-                        }
-                    }
+//                    Layout.fillWidth: true;
 
-                    /*
-                    model: ListModel {
-                        ListElement { displayButton: "Up"; key: "dpup"; value: InputDeviceEvent.Up }
-                        ListElement { displayButton: "Left"; key: "dpleft"; value: InputDeviceEvent.Left }
-                        ListElement { displayButton: "Right"; key: "dpright"; value: InputDeviceEvent.Right }
-                        ListElement { displayButton: "Down"; key: "dpdown"; value: InputDeviceEvent.Down }
-                    }*/
-                }
+//                    height: 175;
 
-                InputMappingColumn {
-                    id: miscButtonColumn;
+//                    headerText: qsTr( "Actions" );
+//                    exclusiveGroup: inputColumnGroup;
+//                    checked: false;
 
-                    Layout.fillWidth: true;
+//                    onExclusiveGroupChanged: {
+//                        if ( exclusiveGroup ) {
+//                            exclusiveGroup.bindCheckable( actionButtonColumn );
+//                        }
+//                    }
 
-                    height: 250;
 
-                    headerText: qsTr( "Misc." );
-                    exclusiveGroup: inputColumnGroup;
-                    checked: false;
+//                }
 
-                    onExclusiveGroupChanged: {
-                        if ( exclusiveGroup ) {
-                            exclusiveGroup.bindCheckable( miscButtonColumn );
-                        }
-                    }
+//                InputMappingColumn {
+//                    id: dpadButtonColumn;
+//                    Layout.fillWidth: true;
+//                    height: 175;
+//                    headerText: qsTr( "Digital" );
+//                    exclusiveGroup: inputColumnGroup;
+//                    checked: false;
+
+//                    onExclusiveGroupChanged: {
+//                        if ( exclusiveGroup ) {
+//                            exclusiveGroup.bindCheckable( dpadButtonColumn );
+//                        }
+//                    }
+
+//                    /*
+//                    model: ListModel {
+//                        ListElement { displayButton: "Up"; key: "dpup"; value: InputDeviceEvent.Up }
+//                        ListElement { displayButton: "Left"; key: "dpleft"; value: InputDeviceEvent.Left }
+//                        ListElement { displayButton: "Right"; key: "dpright"; value: InputDeviceEvent.Right }
+//                        ListElement { displayButton: "Down"; key: "dpdown"; value: InputDeviceEvent.Down }
+//                    }*/
+//                }
+
+//                InputMappingColumn {
+//                    id: miscButtonColumn;
+
+//                    Layout.fillWidth: true;
+
+//                    height: 250;
+
+//                    headerText: qsTr( "Misc." );
+//                    exclusiveGroup: inputColumnGroup;
+//                    checked: false;
+
+//                    onExclusiveGroupChanged: {
+//                        if ( exclusiveGroup ) {
+//                            exclusiveGroup.bindCheckable( miscButtonColumn );
+//                        }
+//                    }
                     /*
                     model: ListModel {
                         ListElement { displayButton: "L3"; key: "leftstick"; value: InputDeviceEvent.L3 }
@@ -199,7 +235,7 @@ Item {
                     }
                 }
                 */
-            }
+            //}
         }
 
     }

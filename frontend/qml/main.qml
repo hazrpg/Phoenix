@@ -20,28 +20,6 @@ ApplicationWindow {
 
     property alias gameConsoleView: gameView;
 
-    function stateChangedCallback( newState ) {
-        console.log( "stateChangedCallback(" + newState + ")" );
-
-        // Nothing to do, the load has begun
-        if( newState === GameConsole.Loading ) {
-            return;
-        }
-
-        // Load complete, start game and hide library
-        if( newState === GameConsole.Playing ) {
-            // Disconnect this callback once it's been used where we want it to be used
-
-            // Destroy this library view and show the game
-            console.log("POPPOPOP " + layoutStackView.currentItem)
-            layoutStackView.pop();
-            console.log("POPPOPOP " + layoutStackView.currentItem)
-
-            return;
-        }
-    }
-
-
     property int defaultMinHeight: 600;
     property int defaultMinWidth: 900;
     minimumHeight: defaultMinHeight;
@@ -74,7 +52,7 @@ ApplicationWindow {
         Component.onCompleted: {
             root.disableMouseClicks();
             root.gameViewObject = push( { item: gameView } );
-            //push( { item: mouseDrivenView, properties: { opacity: 0 } } );
+            push( { item: mouseDrivenView, properties: { opacity: 0 } } );
         }
 
         property string currentObjectName: currentItem === null ? "" : currentItem.objectName;
@@ -162,6 +140,15 @@ ApplicationWindow {
             visible: !layoutStackView.currentObjectName.localeCompare( objectName );
             enabled: visible;
 
+            onPlaybackStateChanged: {
+                if( playbackState === GameConsole.Playing ) {
+
+                    // Destroy this library view and show the game
+                    layoutStackView.pop();
+
+                    return;
+                }
+            }
         }
 
         MouseDrivenView {

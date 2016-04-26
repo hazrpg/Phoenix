@@ -245,7 +245,7 @@ Rectangle {
                     }
                     function pausedCallback( newState ) {
                         // console.log( "pausedCallback(" + newState + ")" );
-                        if( newState === Control.PAUSED ) {
+                        if( newState === GameConsole.Paused ) {
 
                             // This callback is meant to be used until the pause goes through.
                             // Disconnect once it's done
@@ -325,7 +325,7 @@ Rectangle {
 
                     function stoppedCallback( newState ) {
                         console.log( "stoppedCallback(" + newState + ")" );
-                        if( newState === Control.STOPPED ) {
+                        if( newState === GameConsole.Stoppeds ) {
                             coreControl.stateChanged.disconnect( stoppedCallback );
 
                             console.log( "Going to library" );
