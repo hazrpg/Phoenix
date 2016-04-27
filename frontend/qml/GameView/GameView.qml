@@ -39,7 +39,18 @@ Rectangle {
         property bool autoPlay: false;
         property bool firstLaunch: true;
 
-        src: CommandLine.args();
+        Component.onCompleted: {
+            // Grab the command line arg dictionary
+            source = CommandLine.args();
+
+            // Load and play if a type was set (the remaining members of the dict (src) are assumed to be there and
+            // validated by the command line parser)
+            if( source[ "type" ] ) {
+                load();
+                play();
+                layoutStackView.pop();
+            }
+        }
 
         onGamepadAdded: {
             GamepadModel.addGamepad( gamepad );
@@ -51,10 +62,10 @@ Rectangle {
             RemapModel.addGamepad( gamepad );
         }
 
-        onSrcChanged: {
-            title = src[ "title" ];
-            artworkURL = src[ "artworkURL" ];
-            root.touchMode = src[ "core" ].indexOf( "desmume" ) > -1;
+        onSourceChanged: {
+            title = source[ "title" ] ? source[ "title" ] : "";
+            artworkURL = source[ "artworkURL" ];
+            root.touchMode = source[ "core" ].indexOf( "desmume" ) > -1;
         }
 
         onPlaybackStateChanged: {

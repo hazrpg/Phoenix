@@ -28,69 +28,65 @@ void printUsage() {
 }
 
 QVariantMap CommandLine::static_args = QVariantMap();
+QCommandLineParser CommandLine::parser;
 
-CommandLine::CommandLine(QObject *parent)
-    : QObject(parent)
-{
-
+CommandLine::CommandLine( QObject *parent )
+    : QObject( parent ) {
 }
 
-bool CommandLine::checkCmdLineRun(const QCoreApplication &app) {
-    return app.arguments().size() > 1 ;
+void CommandLine::parseCommandLine( const QCoreApplication &app ) {
+    parser.addOptions( {
+        { { "c", "core" }, "Set the Libretro core", "Core path" },
+        { { "g", "game" }, "Set the Libretro game", "Game path" },
+        { "libretro", "Run a game in Libretro mode. Choose a core with -c and a game with -g" }
+    } );
+    parser.addVersionOption();
+    parser.addHelpOption();
+    parser.setApplicationDescription( "Phoenix - A multi-system emulator" );
+    parser.process( app );
+    qDebug() << "Type:" << parser.isSet( "libretro" ) << "Path:"
+             << parser.value( "core" ) << "|" << parser.value( "game" );
+
+    // Set source based on type given, quit if none is set
+    if( parser.isSet( "libretro" ) ) {
+        initLibretroSrc();
+    } else {
+        qWarning() << "A mode must be specified";
+        parser.showHelp();
+    }
 }
 
-bool CommandLine::setArgs( const QCoreApplication &app) {
-
-    auto args = app.arguments();
-    QString key;
-    for( int i=1; i < args.size(); ++i ) {
-        const auto param = args[ i ];
-        if ( param.startsWith( '-' ) ) {
-            if ( !key.isEmpty() ) {
-                static_args[ key ] = QStringLiteral( "" );
-            }
-            key = param;
-        } else {
-            if ( !key.isEmpty() ) {
-               static_args[ key ] = param;
-               key.clear();
-            }
-        }
+void CommandLine::initLibretroSrc() {
+    if( !parser.value( "core" ).isEmpty() ) {
+        static_args[ "core" ] = parser.value( "core" );
+    } else {
+        qWarning() << "A game must be specified";
+        parser.showHelp();
     }
 
-    if ( static_args.contains( QStringLiteral( "--libretro" ) ) ) {
-        if ( args.size() != 6 ) {
-            auto core = static_args[ QStringLiteral( "-c" ) ].toString();
-            auto game = static_args[ QStringLiteral( "-g" ) ].toString();
-            if ( core.isEmpty() ) {
-                qCDebug( phxCmdLine ) << "the core needs to be set by '-c \"/path/to/libretro_core.so\"'.";
-            }
-            if ( game.isEmpty() ) {
-                qCDebug( phxCmdLine ) << "the game needs to be set by '-g \"/path/to/game.file\"'";
-            }
-            printHeader();
-            printUsage();
-            return false;
-        }
-    } else  {
-        qCDebug( phxCmdLine ) << QCoreApplication::applicationName()
-                              << "currently only support the libretro api, set"
-                              << "'--libretro' as the backend.";
-        printHeader();
-        printUsage();
-        return false;
+    if( !parser.value( "game" ).isEmpty() ) {
+        static_args[ "game" ] = parser.value( "game" );
+    } else {
+        qWarning() << "A game must be specified";
+        parser.showHelp();
     }
 
+    if( !QFile::exists( parser.value( "core" ) ) ) {
+        qWarning() << "Core file does not exist!";
+        parser.showHelp();
+    }
 
-    return true;
+    if( !QFile::exists( parser.value( "game" ) ) ) {
+        qWarning() << "Game file does not exist!";
+        parser.showHelp();
+    }
 
 }
 
-QVariant CommandLine::args()
-{
+QVariant CommandLine::args() {
     return static_args;
 }
 
-QObject *CommandLine::registerSingletonCallback(QQmlEngine *, QJSEngine *) {
+QObject *CommandLine::registerSingletonCallback( QQmlEngine *, QJSEngine * ) {
     return new CommandLine;
 }

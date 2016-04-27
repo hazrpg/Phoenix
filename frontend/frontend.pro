@@ -118,9 +118,8 @@ include( deployment.pri )
                cpp/library/model/libretromodel.h \
                cpp/library/scanner/scannerutil.h \
                cpp/logging.h \
-    cpp/commandline.h
-
-    PRECOMPILED_HEADER = cpp/frontendcommon.h
+    cpp/commandline.h\
+    cpp/frontendcommon.h
 
     RESOURCES += qml/qml.qrc \
                  qml/Theme/theme.qrc \

@@ -2,25 +2,28 @@
 
 #include <QObject>
 #include <QVariant>
+#include <QCommandLineOption>
+#include <QCommandLineParser>
 
 class QCoreApplication;
 class QQmlEngine;
 class QJSEngine;
 
-class CommandLine : public QObject
-{
-    Q_OBJECT
+class CommandLine : public QObject {
+        Q_OBJECT
 
-public:
-    explicit CommandLine(QObject *parent = 0);
+    public:
+        explicit CommandLine( QObject *parent = 0 );
 
-    static bool checkCmdLineRun( const QCoreApplication &app );
-    static bool setArgs( const QCoreApplication &app );
+        static void parseCommandLine( const QCoreApplication &app );
 
-    Q_INVOKABLE static QVariant args();
+        static void initLibretroSrc();
 
-    static QObject *registerSingletonCallback( QQmlEngine *engine, QJSEngine * );
+        Q_INVOKABLE static QVariant args();
 
-private:
-    static QVariantMap static_args;
+        static QObject *registerSingletonCallback( QQmlEngine *engine, QJSEngine * );
+
+    private:
+        static QCommandLineParser parser;
+        static QVariantMap static_args;
 };

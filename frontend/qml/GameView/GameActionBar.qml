@@ -325,7 +325,7 @@ Rectangle {
 
                     function stoppedCallback( newState ) {
                         console.log( "stoppedCallback(" + newState + ")" );
-                        if( newState === GameConsole.Stoppeds ) {
+                        if( newState === GameConsole.Stopped ) {
                             coreControl.stateChanged.disconnect( stoppedCallback );
 
                             console.log( "Going to library" );

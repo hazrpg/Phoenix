@@ -142,11 +142,7 @@ int main( int argc, char *argv[] ) {
     QApplication::setOrganizationName( QStringLiteral( "Team Phoenix" ) );
     QApplication::setOrganizationDomain( QStringLiteral( "phoenix.vg" ) );
 
-    if ( CommandLine::checkCmdLineRun( app ) ) {
-        if ( !CommandLine::setArgs( app ) ) {
-            return 1;
-        }
-    }
+    CommandLine::parseCommandLine( app );
 
     // The engine that runs our QML-based UI
     QQmlApplicationEngine engine;
