@@ -4,6 +4,7 @@ dist: xenial
 git:
   submodules: false
 before_install:
+  - lsb_release -a
   - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
   - git submodule update --init --recursive
   - sudo add-apt-repository --yes ppa:beineri/opt-qt56-trusty
