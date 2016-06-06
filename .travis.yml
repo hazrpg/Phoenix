@@ -1,10 +1,9 @@
 language: cpp
 sudo: required
-dist: xenial
+dist: trusty
 git:
   submodules: false
 before_install:
-  - lsb_release -a
   - sed -i 's/git@github.com:/https:\/\/github.com\//' .gitmodules
   - git submodule update --init --recursive
   - sudo add-apt-repository --yes ppa:beineri/opt-qt56-trusty
@@ -13,6 +12,8 @@ before_install:
   - sudo apt-get install -qq g++-4.8 libsamplerate0-dev
   - sudo apt-get install -qq -y qt56base qt56declarative qt56imageformats qt56location qt56multimedia qt56quickcontrols qt56script qt56tools qt56translations libsdl2-dev
   - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
+  - wget http://mirrors.kernel.org/ubuntu/pool/universe/libs/libsdl2/libsdl2-2.0-0_2.0.2+dfsg1-3ubuntu1_amd64.deb
+  - dpkg -i libsdl2-2.0-0_2.0.2+dfsg1-3ubuntu1_amd64.deb
 script:
   - source /opt/qt56/bin/qt56-env.sh
   - mkdir phoenix-build
